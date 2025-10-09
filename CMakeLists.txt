@@ -11,8 +11,15 @@ FetchContent_Declare(
 	GIT_TAG 3.4.0
 )
 
-# Make Eigen available to the project.
-FetchContent_MakeAvailable(eigen)
+# Declare GLM dependency.
+FetchContent_Declare(
+	glm
+	GIT_REPOSITORY https://github.com/g-truc/glm.git
+	GIT_TAG 0.9.9.8
+)
+
+# Make dependencies available to the project.
+FetchContent_MakeAvailable(eigen glm)
 
 # --- C++ Standard Configuration ---
 set(CMAKE_CXX_STANDARD 20)
@@ -29,3 +36,6 @@ add_executable(RoboDesigner src/main.cpp)
 
 # Link the Eigen library to the RoboDesigner target.
 target_link_libraries(RoboDesigner PRIVATE Eigen3::Eigen)
+
+# Link the GLM library to the RoboDesigner target.
+target_link_libraries(RoboDesigner PRIVATE glm::glm)

@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 project(RoboDesigner VERSION 1.0 LANGUAGES CXX)
+enable_testing()
 
 # --- Dependencie Management ---
 include(FetchContent)
@@ -18,8 +19,15 @@ FetchContent_Declare(
 	GIT_TAG 0.9.9.8
 )
 
+# Declare GoogleTest dependency.
+FetchContent_Declare(
+	googletest
+	GIT_REPOSITORY https://github.com/google/googletest.git
+	GIT_TAG v1.14.0
+)
+
 # Make dependencies available to the project.
-FetchContent_MakeAvailable(eigen glm)
+FetchContent_MakeAvailable(eigen glm googletest)
 
 # --- C++ Standard Configuration ---
 set(CMAKE_CXX_STANDARD 20)
@@ -39,3 +47,11 @@ target_link_libraries(RoboDesigner PRIVATE Eigen3::Eigen)
 
 # Link the GLM library to the RoboDesigner target.
 target_link_libraries(RoboDesigner PRIVATE glm::glm)
+
+# --- Testing Target ---
+
+# Add the test executable target for our unit tests.
+add_executable(RoboDesignerTests tests/main_test.cpp)
+
+# Link the GoogleTest library to the RoboDesignerTests target.
+target_link_libraries(RoboDesignerTests PRIVATE gtest_main)

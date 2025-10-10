@@ -5,6 +5,9 @@ enable_testing()
 # --- Dependencie Management ---
 include(FetchContent)
 
+# Disable dependencies tests
+set(BUILD_TESTING OFF CACHE BOOL "Disable building tests for all dependencies")
+
 # Declare Eigen dependency.
 FetchContent_Declare(
 	eigen
@@ -51,7 +54,14 @@ target_link_libraries(RoboDesigner PRIVATE glm::glm)
 # --- Testing Target ---
 
 # Add the test executable target for our unit tests.
-add_executable(RoboDesignerTests tests/main_test.cpp)
+add_executable(RoboDesignerTests 
+tests/main_test.cpp 
+"tests/eigen_integration_test.cpp"
+)
 
-# Link the GoogleTest library to the RoboDesignerTests target.
-target_link_libraries(RoboDesignerTests PRIVATE gtest_main)
+# Link libraries to the RoboDesignerTests target.
+target_link_libraries(RoboDesignerTests 
+	PRIVATE 
+		gtest_main
+		Eigen3::Eigen
+)

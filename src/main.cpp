@@ -1,20 +1,17 @@
 #include <iostream>
-#include <Eigen/Dense>
-#include <glm/glm.hpp>
-#include <glm/gtx/string_cast.hpp>
+#include <RoboDesignerCore/MathUtils.h>
 
 int main() {
-	Eigen::Matrix3d m;
+	Eigen::Matrix2d matrix_a;
+	Eigen::Matrix2d matrix_b;
 
-	m << 1, 2, 3,
-		4, 5, 6,
-		7, 8, 9;
+	matrix_a << 1, 2,
+		3, 4;
 
-	std::cout << "Eigen Matrix:\n" << m << std::endl << std::endl;
+	matrix_b << 5, 6,
+		7, 8;
 
-	// -- GLM Verification --
-	glm::vec3 myVector(1.0f, 2.0f, 3.0f);
+	std::cout << "a * b = \n" << MathUtils::multiplyMatrices(matrix_a, matrix_b) << std::endl << std::endl;
 
-	std::cout << "GLM Vector:\n" << glm::to_string(myVector) << std::endl;
 	return 0;
 }

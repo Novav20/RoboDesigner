@@ -41,15 +41,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Disable compiler-specific extensions for better portability.
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# --- Project Targets ---
-# Add the main executable target for out application.
-add_executable(RoboDesigner src/main.cpp)
+# --- Project Libraries (Layers) ---
+# Add Core layer. This defines the RoboDesignerCore target
+add_subdirectory(src/RoboDesignerCore)
 
-# Link the Eigen library to the RoboDesigner target.
-target_link_libraries(RoboDesigner PRIVATE Eigen3::Eigen)
+# --- Application Target ---
+add_executable(RoboDesignerApp src/main.cpp)
 
-# Link the GLM library to the RoboDesigner target.
-target_link_libraries(RoboDesigner PRIVATE glm::glm)
+# Link our app against core library and GLM
+target_link_libraries(RoboDesignerApp PRIVATE RoboDesignerCore glm::glm)
 
 # --- Testing Target ---
 
@@ -57,11 +57,19 @@ target_link_libraries(RoboDesigner PRIVATE glm::glm)
 add_executable(RoboDesignerTests 
 tests/main_test.cpp 
 "tests/eigen_integration_test.cpp"
-)
+ "tests/glm_integration_test.cpp")
 
 # Link libraries to the RoboDesignerTests target.
 target_link_libraries(RoboDesignerTests 
 	PRIVATE 
+		RoboDesignerCore
 		gtest_main
-		Eigen3::Eigen
+		glm::glm
 )
+
+# Include the GoogleTest module to get helper functions.
+include(GoogleTest)
+
+# Automatically discover all tests within our executable and add them to CTest.
+# This is what allows the VS Test Explorer to see our individual tests.
+gtest_discover_tests(RoboDesignerTests)

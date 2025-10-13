@@ -2,7 +2,7 @@
 add_library(RoboDesignerCore STATIC
 	src/MathUtils.cpp
 	"include/RoboDesignerCore/MathUtils.h"
-)
+ "include/RoboDesignerCore/DHParameters.h")
 
 # Add the "include" directory to the include path (compile-time search paths) 
 # of any target that links against RoboDesignerCore.

@@ -57,9 +57,9 @@ target_link_libraries(RoboDesignerApp PRIVATE RoboDesignerCore glm::glm)
 # --- Test Executable ---
 add_executable(RoboDesignerTests 
 	tests/main_test.cpp
-	tests/math_utils_test.cpp
+	"tests/core/math_utils_test.cpp"
 	tests/glm_integration_test.cpp
-)
+ "tests/core/link_test.cpp")
 target_link_libraries(RoboDesignerTests PRIVATE RoboDesignerCore gtest_main glm::glm)
 
 include(GoogleTest)

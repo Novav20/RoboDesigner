@@ -3,8 +3,8 @@ add_library(RoboDesignerCore STATIC
 	src/MathUtils.cpp
 	"include/RoboDesignerCore/MathUtils.h"
 	"include/RoboDesignerCore/DHParameters.h" 
-	"include/RoboDesignerCore/Link.h" 
-	"src/Link.cpp"
+	"include/RoboDesignerCore/Link.h" "src/Link.cpp"
+	"include/RoboDesignerCore/SerialRobot.h" "src/SerialRobot.cpp"
 )
 
 # Add the "include" directory to the include path (compile-time search paths) 

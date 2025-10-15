@@ -1,17 +1,17 @@
 #include <iostream>
-#include <RoboDesignerCore/MathUtils.h>
+#include <RoboDesignerCore/Link.h>
+#include <RoboDesignerCore/SerialRobot.h>
+#include <format>
 
 int main() {
-	Eigen::Matrix2d matrix_a;
-	Eigen::Matrix2d matrix_b;
+	SerialRobot my_robot("Prometheus. Serial: R-66y");
+	const Link link1({ .theta_ = 0, .d_ = 0, .a_ = 1.0, .alpha_ = 0 });
+	const Link link2({ .theta_ = 0, .d_ = 0, .a_ = 1.0, .alpha_ = 0 });
+	my_robot.addLink(link1);
+	my_robot.addLink(link2);
 
-	matrix_a << 1, 2,
-		3, 4;
-
-	matrix_b << 5, 6,
-		7, 8;
-
-	std::cout << "a * b = \n" << MathUtils::multiplyMatrices(matrix_a, matrix_b) << std::endl << std::endl;
+	std::cout << std::format("Created robot '{}' with {} links.\n",
+		my_robot.getName(), my_robot.getNumLinks());
 
 	return 0;
 }

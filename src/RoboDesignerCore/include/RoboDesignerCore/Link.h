@@ -11,7 +11,7 @@
  * a method to compute the homogeneous transformation matrix that defines the
  * coordinate frame of this link relative to the previous link's frame.
  * The class is generic and does not distinguish between revolute or prismatic
- * joints; that distinction is handled by the caller of getTransformMatrix().
+ * joints; that distinction is handled by the caller of getTransformationMatrix().
  */
 class Link {
 public:
@@ -21,13 +21,13 @@ public:
 	 */
 	explicit Link(const DHParameters& dh_params);
 
-	/**
-	 * @brief Calculates the homogeneous transformation matrix for this link.
-	 * @param joint_variable The current value of the joint's variable motion
-	 *                       (theta for a revolute joint, d for a prismatic joint).
-	 * @return A 4x4 transformation matrix.
-	 */
-	Eigen::Matrix4d getTransformationMatrix(double joint_variable) const;
+    /**
+     * @brief Calculates the homogeneous transformation matrix for this link.
+     * @param jointValue The current value of the joint's variable motion
+     *                   (theta for a revolute joint, d for a prismatic joint).
+     * @return A 4x4 transformation matrix.
+     */
+    Eigen::Matrix4d getTransformationMatrix(double jointValue) const;
 private:
 	DHParameters dh_params_;
 };

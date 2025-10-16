@@ -5,15 +5,17 @@ Link::Link(const DHParameters& dh_params) : dh_params_(dh_params)
 {
 }
 
-Eigen::Matrix4d Link::getTransformationMatrix(double joint_variable) const
+Eigen::Matrix4d Link::getTransformationMatrix(double jointValue) const
 {
 	const double alpha = dh_params_.alpha_;
 	const double a = dh_params_.a_;
 	const double d = dh_params_.d_;
 
-	//TODO: Assume revolute joint for now
-	// The total angle is the fixed offset from D-H params plus the current joint variable.
-	const double theta = dh_params_.theta_ + joint_variable;
+	// TODO: Assume revolute joint for now.
+	// For revolute joints, the effective joint angle is the fixed D-H offset (theta)
+	// plus the current joint value provided by the caller.
+	// For prismatic joints, the analogous composition would be d = d_offset + jointValue.
+	const double theta = dh_params_.theta_ + jointValue;
 
 	Eigen::Affine3d rot_z(Eigen::AngleAxisd(theta, Eigen::Vector3d::UnitZ()));
 	Eigen::Affine3d trans_z(Eigen::Translation3d(0.0, 0.0, d));

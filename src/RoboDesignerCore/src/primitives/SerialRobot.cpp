@@ -1,4 +1,4 @@
-#include <RoboDesignerCore/SerialRobot.h>
+#include <RoboDesignerCore/primitives/SerialRobot.h>
 
 SerialRobot::SerialRobot(const std::string& name) : name_(name)
 {

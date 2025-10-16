@@ -1,4 +1,4 @@
-#include <RoboDesignerCore/Link.h>
+#include <RoboDesignerCore/primitives/Link.h>
 #include <Eigen/Geometry>
 
 Link::Link(const DHParameters& dh_params) : dh_params_(dh_params)

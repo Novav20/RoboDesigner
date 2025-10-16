@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include <RoboDesignerCore/SerialRobot.h>
-#include <RoboDesignerCore/Link.h>
+#include <RoboDesignerCore/primitives/SerialRobot.h>
+#include <RoboDesignerCore/primitives/Link.h>
 
 namespace RoboDesigner::CoreTests {
 	TEST(SerialRobotTests, canAddLinksAndReportCorrectCount) {

@@ -1,5 +1,5 @@
 #pragma once
-#include <RoboDesignerCore/DHParameters.h>
+#include <RoboDesignerCore/primitives/DHParameters.h>
 #include <Eigen/Dense>
 
 /**

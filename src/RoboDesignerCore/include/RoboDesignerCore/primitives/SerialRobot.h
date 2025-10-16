@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include <RoboDesignerCore/Link.h>
+#include <RoboDesignerCore/primitives/Link.h>
 
 /**
  * @class SerialRobot

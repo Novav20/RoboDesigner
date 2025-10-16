@@ -1,6 +1,6 @@
 #include <iostream>
-#include <RoboDesignerCore/Link.h>
-#include <RoboDesignerCore/SerialRobot.h>
+#include <RoboDesignerCore/primitives/Link.h>
+#include <RoboDesignerCore/primitives/SerialRobot.h>
 #include <format>
 
 int main() {

@@ -4,6 +4,16 @@ A cross-platform engineering toolkit for the rapid prototyping and validation of
 
 ---
 
+## 🏛️ Architecture
+
+The project follows a clean, layered architecture to enforce separation of concerns and promote modularity.
+
+*   **`RoboDesignerCore`:** A static library containing the core, platform-independent robotics domain logic (kinematics, dynamics, etc.). It has no knowledge of the UI.
+*   **`RoboDesignerApp`:** The main executable application that provides the user interface and depends on the Core library.
+*   **`RoboDesignerTests`:** A separate executable for running unit tests against the `RoboDesignerCore` library.
+
+---
+
 ## 🛠️ Technology Stack
 
 *   **Core Language:** C++20
@@ -48,8 +58,6 @@ This project manages its dependencies automatically using CMake's `FetchContent`
     *   Press the green "Play" button (or `F5`) to build and run the main application.
 
 4.  **Build and Run the Tests:**
-    *   In the top toolbar, select the `RoboDesignerTests.exe` target.
-    *   Build the project by going to `Build > Build RoboDesignerTests.exe`.
+    *   Build the full solution via `Build > Build Solution`.
     *   Open the Test Explorer via `Test > Test Explorer`.
     *   Click the "Run All Tests" button in the Test Explorer panel. All tests should pass.
-

@@ -2,37 +2,35 @@
 
 #include <string>
 #include <vector>
-#include <RoboDesignerCore/primitives/Link.h>
+#include <memory>
+#include <RoboDesignerCore/kinematics/IKinematicsEngine.h>
 
 /**
  * @class SerialRobot
- * @brief Represents a serial kinematic chain, a collection of links.
+ * @brief Represents a complete, controllable serial robot entity.
  *
- * This class serves as a container for a robot's structural definition.
- * It manages an ordered sequence of Link objects that constitute the
- * manipulator. The class itself is stateless; it holds the robot's
- * constant geometric properties, while the robot's current configuration
- * (i.e., its joint values) is provided to its methods as needed.
+ * This class acts as the primary public interface for a robot. It follows the
+ * Strategy design pattern by owning a polymorphic IKinematicsEngine object,
+ * to which it delegates all kinematics calculations. This decouples the robot
+ * entity from the specific algorithm used to solve its motion, allowing for
+ * greater flexibility and scalability.
  */
 class SerialRobot {
 public:
     /**
-     * @brief Constructs a new SerialRobot with a given name.
+     * @brief Constructs a new SerialRobot.
      * @param name The identifying name for the robot.
+     * @param kinematics_engine A unique_ptr to a kinematics engine. The SerialRobot
+     *                          takes ownership of this engine.
      */
-    explicit SerialRobot(const std::string& name);
+    explicit SerialRobot(const std::string& name, std::unique_ptr<IKinematicsEngine> kinematics_engine);
 
     /**
-     * @brief Adds a new link to the end of the kinematic chain.
-     * @param link The Link object to add. Links are added in order from base to end-effector.
+     * @brief Calculates the pose of the end-effector for a given set of joint positions.
+     * @param joint_positions An ordered vector of the current joint variable values.
+     * @return The 4x4 homogeneous transformation matrix of the end-effector's pose.
      */
-    void addLink(const Link& link);
-
-    /**
-     * @brief Gets the number of links in the kinematic chain.
-     * @return The number of links, which corresponds to the robot's degrees of freedom.
-     */
-    size_t getNumLinks() const;
+    Eigen::Matrix4d getEndEffectorPose(const std::vector<double>& joint_positions) const;
 
     /**
      * @brief Gets the name of the robot.
@@ -42,5 +40,5 @@ public:
 
 private:
     std::string name_;
-    std::vector<Link> links_;
+    std::unique_ptr<IKinematicsEngine> kinematics_engine_;
 };

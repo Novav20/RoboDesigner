@@ -6,11 +6,13 @@ A cross-platform engineering toolkit for the rapid prototyping and validation of
 
 ## 🏛️ Architecture
 
-The project follows a clean, layered architecture to enforce separation of concerns and promote modularity.
+The project is built on a clean, layered architecture designed for modularity, testability, and scalability. It uses the **Strategy design pattern** to decouple the core robot entity from the specific algorithms used to solve its motion.
 
-*   **`RoboDesignerCore`:** A static library containing the core, platform-independent robotics domain logic (kinematics, dynamics, etc.). It has no knowledge of the UI.
-*   **`RoboDesignerApp`:** The main executable application that provides the user interface and depends on the Core library.
-*   **`RoboDesignerTests`:** A separate executable for running unit tests against the `RoboDesignerCore` library.
+*   **`RoboDesignerCore` (Static Library):** The "Domain" layer. Contains all platform-independent robotics logic.
+    *   **Primitives (`primitives/`):** Core data structures like `SerialRobot`, `Link`, and `DHParameters`. The `SerialRobot` class acts as the primary public "facade" for a robot.
+    *   **Engines (`kinematics/`):** Contains the algorithmic "strategies." `IKinematicsEngine` is the abstract interface, and `SerialDH_KinematicsEngine` is the concrete implementation for D-H forward kinematics.
+*   **`RoboDesignerApp` (Executable):** The main application ("UI" layer). It consumes the `RoboDesignerCore` library to build and command the robot.
+*   **`RoboDesignerTests` (Executable):** A separate application for running all unit tests against the `RoboDesignerCore` library.
 
 ---
 

@@ -1,11 +1,11 @@
 # Define the RoboDesignerCore static library from source and header files.
 add_library(RoboDesignerCore STATIC
-	src/MathUtils.cpp
-	"include/RoboDesignerCore/MathUtils.h"
-	"include/RoboDesignerCore/DHParameters.h" 
-	"include/RoboDesignerCore/Link.h" "src/Link.cpp"
-	"include/RoboDesignerCore/SerialRobot.h" "src/SerialRobot.cpp"
-)
+	"include/RoboDesignerCore/utils/MathUtils.h" "src/utils/MathUtils.cpp"
+	"include/RoboDesignerCore/primitives/DHParameters.h" 
+	"include/RoboDesignerCore/primitives/Link.h" "src/primitives/Link.cpp"
+	"include/RoboDesignerCore/primitives/SerialRobot.h" "src/primitives/SerialRobot.cpp"
+	"include/RoboDesignerCore/kinematics/IKinematicsEngine.h"
+ "include/RoboDesignerCore/kinematics/SerialDH_KinematicsEngine.h" "src/kinematics/SerialDH_KinematicsEngine.cpp")
 
 # Add the "include" directory to the include path (compile-time search paths) 
 # of any target that links against RoboDesignerCore.

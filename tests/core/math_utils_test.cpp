@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <RoboDesignerCore/MathUtils.h>
+#include <RoboDesignerCore/utils/MathUtils.h>
 
 namespace RoboDesigner::CoreTests {
 	TEST(MathUtilsTests, MatrixMultiplication) {

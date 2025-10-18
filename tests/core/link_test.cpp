@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <RoboDesignerCore/Link.h>
+#include <RoboDesignerCore/primitives/Link.h>
 #include <Eigen/Dense>
 #include <numbers>
 

@@ -1,5 +1,5 @@
 #pragma once
-#include <RoboDesignerCore/DHParameters.h>
+#include <RoboDesignerCore/primitives/DHParameters.h>
 #include <Eigen/Dense>
 
 /**
@@ -23,11 +23,11 @@ public:
 
     /**
      * @brief Calculates the homogeneous transformation matrix for this link.
-     * @param jointValue The current value of the joint's variable motion
+     * @param joint_value The current value of the joint's variable motion
      *                   (theta for a revolute joint, d for a prismatic joint).
      * @return A 4x4 transformation matrix.
      */
-    Eigen::Matrix4d getTransformationMatrix(double jointValue) const;
+    Eigen::Matrix4d getTransformationMatrix(double joint_value) const;
 private:
 	DHParameters dh_params_;
 };

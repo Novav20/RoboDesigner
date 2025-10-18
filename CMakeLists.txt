@@ -59,7 +59,7 @@ add_executable(RoboDesignerTests
 	tests/main_test.cpp
 	"tests/core/math_utils_test.cpp"
 	tests/glm_integration_test.cpp
- "tests/core/link_test.cpp" "tests/core/serial_robot_test.cpp" "tests/core/kinematics/serial_dh_kinematics_engine_test.cpp")
+ "tests/core/link_test.cpp" "tests/core/primitives/serial_robot_test.cpp" "tests/core/kinematics/serial_dh_kinematics_engine_test.cpp")
 target_link_libraries(RoboDesignerTests PRIVATE RoboDesignerCore gtest_main glm::glm)
 
 include(GoogleTest)

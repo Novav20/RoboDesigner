@@ -1,12 +1,11 @@
 #include <QApplication>
-#include <QWidget>
+#include "windows/MainWindow.h"
 
 int main(int argc, char *argv[]) {
 	// QApplication manages GUI application-wide resources
 	QApplication app(argc, argv);
 
-	// QWidget is the base class of all user interface objects.
-	QWidget window;
+	MainWindow window;
 
 	// Set the default size and title of the window.
 	window.resize(800, 600);

@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include "../widgets/RobotControlPanel.h"
+#include "../widgets/VisualizationWidget.h"
 #include <QHBoxLayout>
 #include <QWidget>
 
@@ -10,5 +11,8 @@ MainWindow::MainWindow(QWidget* parent)
 	setCentralWidget(central_widget);
 	auto* main_layout = new QHBoxLayout(central_widget);
 	auto* control_panel = new RobotControlPanel();
+	auto* visualization_widget = new VisualizationWidget();
+	visualization_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	main_layout->addWidget(control_panel);
+	main_layout->addWidget(visualization_widget);
 }

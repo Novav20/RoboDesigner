@@ -10,11 +10,6 @@ RobotControlPanel::RobotControlPanel(QWidget* parent)
 	main_layout_ = new QVBoxLayout(this);
 }
 
-void jointParameterChanged(int liknk_index, int param_indx, double value)
-{
-
-}
-
 void RobotControlPanel::createJointControls(int num_joints)
 {
 	// Clear any existing widgets from the layout.

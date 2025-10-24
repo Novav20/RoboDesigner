@@ -7,26 +7,60 @@
 RobotControlPanel::RobotControlPanel(QWidget* parent)
 	: QWidget(parent)
 {
-	auto* main_layout = new QVBoxLayout(this);
-	auto* link1_grup_box = new QGroupBox("Link 1 D-H Parameters");
-	auto* grid_layout = new QGridLayout();
-	grid_layout->addWidget(new QLabel("Theta (rad):"), 0, 0);
-	theta_spin_box_ = new QDoubleSpinBox();
-	grid_layout->addWidget(theta_spin_box_, 0, 1);
-	
-	grid_layout->addWidget(new QLabel("d (m)"), 1, 0);
-	grid_layout->addWidget(new QDoubleSpinBox(), 1, 1);
-	
-	grid_layout->addWidget(new QLabel("a (m)"), 2, 0);
-	grid_layout->addWidget(new QDoubleSpinBox(), 2, 1);
-
-	grid_layout->addWidget(new QLabel("Alpha (rad)"), 3, 0);
-	grid_layout->addWidget(new QDoubleSpinBox(), 3, 1);
-
-	link1_grup_box->setLayout(grid_layout);
-
-	main_layout->addWidget(link1_grup_box);
-	main_layout->addStretch();
+	main_layout_ = new QVBoxLayout(this);
 }
 
+void jointParameterChanged(int liknk_index, int param_indx, double value)
+{
 
+}
+
+void RobotControlPanel::createJointControls(int num_joints)
+{
+	// Clear any existing widgets from the layout.
+	QLayoutItem* item;
+	while ((item = main_layout_->takeAt(0)) != nullptr) {
+		if (item->widget()) {
+			delete item->widget();
+		}
+		delete item;
+	}
+
+	// A list of D-H parameter labels for the UI.
+	const QStringList param_labels = { "Theta (rad)", "d (m)", "a (m)", "Alpha (rad)" };
+
+	for (int i = 0; i < num_joints; ++i) {
+		auto* joint_group_box = new QGroupBox(QString("Link %1").arg(i + 1));
+		auto* group_box_layout = new QGridLayout();
+
+		// Create controls for all four D-H parameters.
+		for (int j = 0; j < 4; ++j) {
+			auto* param_label = new QLabel(param_labels[j]);
+			auto* param_spin_box = new QDoubleSpinBox();
+
+			param_spin_box->setRange(-1000.0, 1000.0); // A generic, wide range
+			param_spin_box->setSingleStep(0.01);
+			param_spin_box->setDecimals(4);
+
+			group_box_layout->addWidget(param_label, j, 0);
+			group_box_layout->addWidget(param_spin_box, j, 1);
+
+			// --- Connecting the Dynamic Widget ---
+			// We use a C++ lambda function to capture the context (the link index 'i'
+			// and the parameter index 'j'). When the spin box's valueChanged signal
+			// is emitted, this lambda will execute.
+			connect(param_spin_box, &QDoubleSpinBox::valueChanged, this,
+				[this, link_index = i, param_index = j](double value) {
+					// Inside the lambda, we emit our own public signal, passing along
+					// all the necessary context.
+					emit jointParameterChanged(link_index, param_index, value);
+				}
+			);
+		}
+
+		joint_group_box->setLayout(group_box_layout);
+		main_layout_->addWidget(joint_group_box);
+	}
+
+	main_layout_->addStretch();
+}

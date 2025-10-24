@@ -1,18 +1,23 @@
 #include <QApplication>
 #include "windows/MainWindow.h"
+#include <RoboDesignerCore/primitives/SerialRobot.h>
+#include <memory>
 
-int main(int argc, char *argv[]) {
-	// QApplication manages GUI application-wide resources
+int main(int argc, char* argv[]) {
 	QApplication app(argc, argv);
 
+	// Create the main window. It will start empty.
 	MainWindow window;
 
-	// Set the default size and title of the window.
-	window.resize(800, 600);
+	// Use our new factory method to create a demo robot.
+	std::unique_ptr<SerialRobot> demo_robot = SerialRobot::createTwoLinkPlanar();
+
+	// Load the robot into the main window, which will generate the UI.
+	window.loadRobot(demo_robot.get()); // Pass a raw, non-owning pointer
+
+	window.resize(1024, 768);
 	window.setWindowTitle("RoboDesigner");
 	window.show();
 
-	// Start the Qt event loop. This call is blocking and will only
-	// return when the application is quit (e.g., the window is closed).
 	return app.exec();
 }

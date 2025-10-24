@@ -21,3 +21,8 @@ Eigen::Matrix4d SerialDH_KinematicsEngine::calculateForwardKinematics(const std:
 
 	return pose;
 }
+
+size_t SerialDH_KinematicsEngine::getNumJoints() const
+{
+	return links_.size();
+}

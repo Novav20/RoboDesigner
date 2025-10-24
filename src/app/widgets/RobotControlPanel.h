@@ -1,14 +1,13 @@
 #pragma once
 #include <QWidget>
-#include <QDoubleSpinBox>
+#include <QVBoxLayout>
 
 class RobotControlPanel : public QWidget {
 	Q_OBJECT
+signals: void jointParameterChanged(int liknk_index, int param_indx, double value);
 public:
 	explicit RobotControlPanel(QWidget* parent = nullptr);
-	// Temporary public getter to facilitate learning connect()
-	// In a real design, this would be replaced by a public signal.
-	QDoubleSpinBox* getThetaSpinBox() const { return theta_spin_box_; }
+	void createJointControls(int num_joints);
 private:
-	QDoubleSpinBox* theta_spin_box_;
+	QVBoxLayout* main_layout_;
 };

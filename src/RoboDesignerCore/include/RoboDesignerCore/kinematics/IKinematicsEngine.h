@@ -30,4 +30,9 @@ public:
 	 *         end-effector's pose relative to the robot's base frame.
 	 */
 	virtual Eigen::Matrix4d calculateForwardKinematics(const std::vector<double>& joint_positions) const = 0;
+
+	/**
+	* @brief Returns the number of joints/links in the kinematic chain.
+	*/
+	virtual size_t getNumJoints() const = 0;
 };

@@ -38,6 +38,10 @@ public:
 	 */
 	const std::string& getName() const;
 
+	/**
+	 * @brief Gets the number of joints (degrees of freedom) of the robot.
+	 * @return The number of joints in the robot's kinematic chain.
+	 */
 	size_t getNumJoints() const;
 
 	/**

@@ -17,5 +17,5 @@ target_include_directories(RoboDesignerCore PUBLIC
 # The PUBLIC keyword ensures that both RoboDesignerCore and any target linking to it 
 # will have Eigen's include directories added automatically.
 target_link_libraries(RoboDesignerCore PUBLIC
-	Eigen3::Eigen
+	eigen_interface
 )

@@ -28,6 +28,8 @@ public:
      */
     Eigen::Matrix4d calculateForwardKinematics(const std::vector<double>& joint_positions) const override;
 
+    size_t getNumJoints() const override;
+
 private:
     // A private copy of the robot's kinematic chain (its structure).
     std::vector<Link> links_;

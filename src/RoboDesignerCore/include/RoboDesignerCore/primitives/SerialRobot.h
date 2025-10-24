@@ -17,28 +17,39 @@
  */
 class SerialRobot {
 public:
-    /**
-     * @brief Constructs a new SerialRobot.
-     * @param name The identifying name for the robot.
-     * @param kinematics_engine A unique_ptr to a kinematics engine. The SerialRobot
-     *                          takes ownership of this engine.
-     */
-    explicit SerialRobot(const std::string& name, std::unique_ptr<IKinematicsEngine> kinematics_engine);
+	/**
+	 * @brief Constructs a new SerialRobot.
+	 * @param name The identifying name for the robot.
+	 * @param kinematics_engine A unique_ptr to a kinematics engine. The SerialRobot
+	 *                          takes ownership of this engine.
+	 */
+	explicit SerialRobot(const std::string& name, std::unique_ptr<IKinematicsEngine> kinematics_engine);
 
-    /**
-     * @brief Calculates the pose of the end-effector for a given set of joint positions.
-     * @param joint_positions An ordered vector of the current joint variable values.
-     * @return The 4x4 homogeneous transformation matrix of the end-effector's pose.
-     */
-    Eigen::Matrix4d getEndEffectorPose(const std::vector<double>& joint_positions) const;
+	/**
+	 * @brief Calculates the pose of the end-effector for a given set of joint positions.
+	 * @param joint_positions An ordered vector of the current joint variable values.
+	 * @return The 4x4 homogeneous transformation matrix of the end-effector's pose.
+	 */
+	Eigen::Matrix4d getEndEffectorPose(const std::vector<double>& joint_positions) const;
 
-    /**
-     * @brief Gets the name of the robot.
-     * @return A constant reference to the robot's name string.
-     */
-    const std::string& getName() const;
+	/**
+	 * @brief Gets the name of the robot.
+	 * @return A constant reference to the robot's name string.
+	 */
+	const std::string& getName() const;
 
+	/**
+	 * @brief Gets the number of joints (degrees of freedom) of the robot.
+	 * @return The number of joints in the robot's kinematic chain.
+	 */
+	size_t getNumJoints() const;
+
+	/**
+	 * @brief A factory method to create a simple 2-link planar demo robot.
+	 * @return A unique_ptr to the newly created SerialRobot.
+	 */
+	static std::unique_ptr<SerialRobot> createTwoLinkPlanar();
 private:
-    std::string name_;
-    std::unique_ptr<IKinematicsEngine> kinematics_engine_;
+	std::string name_;
+	std::unique_ptr<IKinematicsEngine> kinematics_engine_;
 };

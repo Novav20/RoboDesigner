@@ -1,6 +1,8 @@
 #pragma once
 #include <QFrame>
 
+class QPaintEvent;
+
 /**
  * @class VisualizationWidget
  * @brief A placeholder widget for the 2D/3D robot visualization scene.
@@ -19,4 +21,6 @@ public:
      * @param parent The optional parent widget.
      */
     explicit VisualizationWidget(QWidget* parent = nullptr);
+protected:
+    void paintEvent(QPaintEvent* event) override;
 };

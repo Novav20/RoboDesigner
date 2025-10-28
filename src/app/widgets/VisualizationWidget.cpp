@@ -11,15 +11,27 @@ VisualizationWidget::VisualizationWidget(QWidget* parent)
 
 void VisualizationWidget::paintEvent(QPaintEvent* event)
 {
+	// Zoom level
+	const double pixels_per_meter = 100.0;
+
 	// Call base class first
 	QFrame::paintEvent(event);
 
 	// Create the painter
 	QPainter painter(this);
 
-	// Set the Pen
-	painter.setPen(Qt::cyan);
+	// Translate origin
+	painter.translate(width() / 2.0, height()/2.0);
 
-	// Draw a Line
-	painter.drawLine(0, 0, width(), height());
+	// Scale and flip Y-axis
+	painter.scale(pixels_per_meter, -pixels_per_meter);
+
+	// Set the Pen
+	QPen pen(Qt::green);
+	pen.setWidth(1);
+	pen.setCosmetic(true);
+	painter.setPen(pen);
+
+	// Draw a Line from world origin (0,0)  to the point (1,1) meters
+	painter.drawLine(QPointF(0.0, 0.0), QPointF(1.0, 1.0));
 }

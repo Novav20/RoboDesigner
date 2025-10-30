@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include <vector>
+#include <RoboDesignerCore/primitives/DHParameterIndex.h>
 
 class QVBoxLayout;
 class QDoubleSpinBox;
@@ -34,6 +35,16 @@ public:
      */
     void createJointControls(int num_joints);
 
+    /**
+    * @brief Sets the values of the joint control spin boxes.
+    *
+    * This method programmatically updates the UI to display the provided
+    * joint positions. It is the public interface for allowing an external
+    * controller to update the view.
+    * @param positions An ordered vector of joint positions (in radians) to display.
+    */
+    void setJointPositions(const std::vector<double>& positions);
+
     std::vector<double> getJointPositions() const;
 
 signals:
@@ -43,7 +54,7 @@ signals:
      * @param param_index The index of the parameter (0=theta, 1=d, 2=a, 3=alpha).
      * @param value The new value of the parameter.
      */
-    void jointParameterChanged(int link_index, int param_index, double value);
+    void jointParameterChanged(int link_index, DHParameterIndex param_index, double value);
 
 private:
     // The main vertical layout that holds all the joint group boxes.

@@ -1,10 +1,13 @@
 #pragma once
 
 #include <QMainWindow>
+#include <vector>
+#include <RoboDesignerCore/primitives/DHParameterIndex.h>
 
 class SerialRobot;
 class RobotControlPanel;
 class VisualizationWidget;
+class QTimer;
 
 /**
  * @class MainWindow
@@ -41,7 +44,9 @@ private slots:
      * @param param_index The index of the D-H parameter being modified (0=theta, 1=d, etc.).
      * @param value The new value of the parameter.
      */
-    void onParameterChanged(int link_index, int param_index, double value);
+    void onParameterChanged(int link_index, DHParameterIndex param_index, double value);
+
+    void runAnimationStep();
 
 private:
     // Pointers to the main UI components. These are owned by the widget hierarchy.
@@ -52,6 +57,10 @@ private:
     SerialRobot* robot_;
     
     VisualizationWidget* visualization_widget_; 
+
+    std::vector<double> joint_positions_;
+
+    QTimer* animation_timer_;
 
     void updateVisualization();
 };

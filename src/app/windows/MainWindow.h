@@ -2,10 +2,9 @@
 
 #include <QMainWindow>
 
-// Forward declarations are a best practice to reduce compile times.
-// We only need to know that these classes exist, not their full definition.
 class SerialRobot;
 class RobotControlPanel;
+class VisualizationWidget;
 
 /**
  * @class MainWindow
@@ -51,4 +50,8 @@ private:
     // A non-owning pointer to the currently active robot model.
     // The lifetime of the robot is managed elsewhere (e.g., in main()).
     SerialRobot* robot_;
+    
+    VisualizationWidget* visualization_widget_; 
+
+    void updateVisualization();
 };

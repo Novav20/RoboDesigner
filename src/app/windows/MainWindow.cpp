@@ -17,12 +17,12 @@ MainWindow::MainWindow(QWidget* parent)
 
 	// --- Create Child Widgets ---
 	control_panel_ = new RobotControlPanel(); // Assign to member variable
-	auto* visualization_widget = new VisualizationWidget();
-	visualization_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	visualization_widget_ = new VisualizationWidget();
+	visualization_widget_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 	// --- Add Widgets to Layout ---
 	main_layout->addWidget(control_panel_);
-	main_layout->addWidget(visualization_widget);
+	main_layout->addWidget(visualization_widget_);
 
 	// --- Connect Signals and Slots ---
 	// Connect the control panel's public signal to our private slot.
@@ -41,10 +41,20 @@ void MainWindow::loadRobot(SerialRobot* robot)
 		// If the robot is null, clear the controls.
 		control_panel_->createJointControls(0);
 	}
+	updateVisualization();
+}
+
+void MainWindow::updateVisualization()
+{
+	if (!robot_) {
+		return;
+	}
+	const std::vector<double> joint_positions = control_panel_->getJointPositions();
+	const std::vector<Eigen::Matrix4d> all_poses = robot_->getAllLinkPoses(joint_positions);
+	visualization_widget_->updateRobotPoses(all_poses);
 }
 
 // Note the updated signature to match the new signal
 void MainWindow::onParameterChanged(int link_index, int param_index, double value) {
-	qDebug() << "Parameter changed for Link" << link_index + 1
-		<< ", Param" << param_index << "to new value:" << value;
+	updateVisualization();
 }

@@ -29,10 +29,24 @@ public:
 	 * @return The resulting 4x4 homogeneous transformation matrix representing the
 	 *         end-effector's pose relative to the robot's base frame.
 	 */
-	virtual Eigen::Matrix4d calculateForwardKinematics(const std::vector<double>& joint_positions) const = 0;
+	virtual Eigen::Matrix4d calculateForwardKinematics(const std::vector<double>& joint_positions) const {
+		const auto all_poses = calculateAllLinkPoses(joint_positions);
+		if (all_poses.empty()) {
+			return Eigen::Matrix4d::Identity();
+		}
+		return all_poses.back();
+	}
 
 	/**
 	* @brief Returns the number of joints/links in the kinematic chain.
 	*/
 	virtual size_t getNumJoints() const = 0;
+
+	/**
+	* @brief Calculates the pose of all link frames in the kinematic chain.
+	* @param joint_positions An ordered vector of the current joint variable values.
+	* @return An ordered vector of 4x4 pose matrices, one for each link frame,
+	*         relative to the base frame. Returns an empty vector on error.
+	*/
+	virtual std::vector<Eigen::Matrix4d> calculateAllLinkPoses(const std::vector<double>& joint_positions) const = 0;
 };

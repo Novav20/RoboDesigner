@@ -1,8 +1,10 @@
 #pragma once
 
 #include <QWidget>
+#include <vector>
 
 class QVBoxLayout;
+class QDoubleSpinBox;
 /**
  * @class RobotControlPanel
  * @brief A composite widget for displaying and editing robot parameters.
@@ -32,6 +34,8 @@ public:
      */
     void createJointControls(int num_joints);
 
+    std::vector<double> getJointPositions() const;
+
 signals:
     /**
      * @brief Emitted when any D-H parameter is changed in the UI.
@@ -44,4 +48,6 @@ signals:
 private:
     // The main vertical layout that holds all the joint group boxes.
     QVBoxLayout* main_layout_;
+
+    std::vector<QDoubleSpinBox*> joint_spin_boxes_;
 };

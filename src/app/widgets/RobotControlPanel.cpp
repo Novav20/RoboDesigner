@@ -24,6 +24,8 @@ void RobotControlPanel::createJointControls(int num_joints)
 	// A list of D-H parameter labels for the UI.
 	const QStringList param_labels = { "Theta (rad)", "d (m)", "a (m)", "Alpha (rad)" };
 
+	joint_spin_boxes_.clear();
+
 	for (int i = 0; i < num_joints; ++i) {
 		auto* joint_group_box = new QGroupBox(QString("Link %1").arg(i + 1));
 		auto* group_box_layout = new QGridLayout();
@@ -32,6 +34,10 @@ void RobotControlPanel::createJointControls(int num_joints)
 		for (int j = 0; j < 4; ++j) {
 			auto* param_label = new QLabel(param_labels[j]);
 			auto* param_spin_box = new QDoubleSpinBox();
+
+			if (j == 0) { // If this is the 'theta' parameter
+				joint_spin_boxes_.push_back(param_spin_box);
+			}
 
 			param_spin_box->setRange(-1000.0, 1000.0); // A generic, wide range
 			param_spin_box->setSingleStep(0.01);
@@ -58,4 +64,13 @@ void RobotControlPanel::createJointControls(int num_joints)
 	}
 
 	main_layout_->addStretch();
+}
+
+std::vector<double> RobotControlPanel::getJointPositions() const
+{
+	std::vector<double> joint_positions;
+	for (auto& spin_box : joint_spin_boxes_) {
+		joint_positions.push_back(spin_box->value());
+	}
+	return joint_positions;
 }

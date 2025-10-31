@@ -5,11 +5,13 @@ SerialDH_KinematicsEngine::SerialDH_KinematicsEngine(const std::vector<Link>& li
 {
 }
 
-Eigen::Matrix4d SerialDH_KinematicsEngine::calculateForwardKinematics(const std::vector<double>& joint_positions) const
+std::vector<Eigen::Matrix4d> SerialDH_KinematicsEngine::calculateAllLinkPoses(const std::vector<double>& joint_positions) const
 {
+	std::vector<Eigen::Matrix4d> all_poses;
+
 	if (joint_positions.size() != links_.size()) {
-		std::cerr << "The number of joints and links are not the same" << std::endl;
-		return Eigen::Matrix4d::Identity();
+		std::cerr << "Error: Number of joint positions does not match number of links." << std::endl;
+		return {};
 	}
 	Eigen::Matrix4d pose(Eigen::Matrix4d::Identity());
 
@@ -17,10 +19,12 @@ Eigen::Matrix4d SerialDH_KinematicsEngine::calculateForwardKinematics(const std:
 	{
 		const Eigen::Matrix4d link_transform(links_[i].getTransformationMatrix(joint_positions[i]));
 		pose = pose * link_transform;
+		all_poses.push_back(pose);
 	}
 
-	return pose;
+	return all_poses;
 }
+
 
 size_t SerialDH_KinematicsEngine::getNumJoints() const
 {

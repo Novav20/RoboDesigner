@@ -37,3 +37,11 @@ std::unique_ptr<SerialRobot> SerialRobot::createTwoLinkPlanar() {
 
 	return std::make_unique<SerialRobot>("2-Link Planar Robot", std::move(kinematics_engine));
 }
+
+std::vector<Eigen::Matrix4d> SerialRobot::getAllLinkPoses(const std::vector<double>& joint_positions) const
+{
+	if (!kinematics_engine_) {
+		return {};
+	}
+	return kinematics_engine_->calculateAllLinkPoses(joint_positions);
+}

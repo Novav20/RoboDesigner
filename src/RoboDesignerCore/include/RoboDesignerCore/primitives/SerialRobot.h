@@ -49,6 +49,13 @@ public:
 	 * @return A unique_ptr to the newly created SerialRobot.
 	 */
 	static std::unique_ptr<SerialRobot> createTwoLinkPlanar();
+
+	/**
+	* @brief Calculates the pose of all link frames for a given set of joint positions.
+	* @param joint_positions An ordered vector of the current joint variable values.
+	* @return An ordered vector of 4x4 pose matrices for each link.
+	*/
+	std::vector<Eigen::Matrix4d> getAllLinkPoses(const std::vector<double>& joint_positions) const;
 private:
 	std::string name_;
 	std::unique_ptr<IKinematicsEngine> kinematics_engine_;

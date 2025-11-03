@@ -35,7 +35,15 @@ public:
 			return Eigen::Matrix4d::Identity();
 		}
 		return all_poses.back();
-	}
+	};
+
+	/**
+	* @brief Calculates the inverse kinematics for a desired end-effector position.
+	* @param target_position The desired 3D position (x, y, z) of the end-effector.
+	* @return A vector of the calculated joint angles. Returns an empty vector
+	*         if the target is unreachable or no solution is found.
+	*/
+	virtual std::vector<double> calculateInverseKinematics(const Eigen::Vector3d& target_position) const = 0;
 
 	/**
 	* @brief Returns the number of joints/links in the kinematic chain.

@@ -29,6 +29,13 @@ public:
 	std::vector<Eigen::Matrix4d> calculateAllLinkPoses(const std::vector<double>& joint_positions) const override;
 
 	/**
+	 * @brief Calculates analytical inverse kinematics for a 2-link planar robot.
+	 * @param target_position The desired 3D position of the end-effector.
+	 * @return A vector containing {theta1, theta2}. Returns an empty vector if unreachable.
+	 */
+	std::vector<double> calculateInverseKinematics(const Eigen::Vector3d& target_position) const override;
+
+	/**
 	 * @brief Gets the number of joints in the engine's kinematic chain.
 	 * @return The number of joints.
 	 */

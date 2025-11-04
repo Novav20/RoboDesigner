@@ -12,14 +12,14 @@
  * Strategy design pattern, allowing different kinematic algorithms (e.g.,
  * Denavit-Hartenberg, Product of Exponentials) to be used interchangeably.
  */
-class IKinematicsEngine {
+class IForwardKinematicsSolver {
 public:
 	/**
 	 * @brief Virtual destructor.
 	 * Ensures that the destructor of the derived class is called correctly
 	 * when an object is deleted through a base class pointer.
 	 */
-	virtual ~IKinematicsEngine() = default;
+	virtual ~IForwardKinematicsSolver() = default;
 
 	/**
 	 * @brief Calculates the forward kinematics for a given set of joint positions.
@@ -36,14 +36,6 @@ public:
 		}
 		return all_poses.back();
 	};
-
-	/**
-	* @brief Calculates the inverse kinematics for a desired end-effector position.
-	* @param target_position The desired 3D position (x, y, z) of the end-effector.
-	* @return A vector of the calculated joint angles. Returns an empty vector
-	*         if the target is unreachable or no solution is found.
-	*/
-	virtual std::vector<double> calculateInverseKinematics(const Eigen::Vector3d& target_position) const = 0;
 
 	/**
 	* @brief Returns the number of joints/links in the kinematic chain.

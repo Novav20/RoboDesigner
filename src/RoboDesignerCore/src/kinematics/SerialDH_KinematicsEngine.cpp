@@ -26,11 +26,6 @@ std::vector<Eigen::Matrix4d> SerialDH_KinematicsEngine::calculateAllLinkPoses(co
 }
 
 
-std::vector<double> SerialDH_KinematicsEngine::calculateInverseKinematics(const Eigen::Vector3d& target_position) const
-{
-	return std::vector<double>();
-}
-
 size_t SerialDH_KinematicsEngine::getNumJoints() const
 {
 	return links_.size();

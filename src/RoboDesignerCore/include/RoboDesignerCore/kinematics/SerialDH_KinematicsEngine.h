@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <RoboDesignerCore/kinematics/IKinematicsEngine.h>
+#include <RoboDesignerCore/kinematics/IForwardKinematicsSolver.h>
 #include <RoboDesignerCore/primitives/Link.h>
 
 /**
@@ -12,7 +12,7 @@
  * classic Denavit-Hartenberg (D-H) method. It stores a copy of the robot's
  * kinematic chain and uses it to perform the FK calculations.
  */
-class SerialDH_KinematicsEngine : public IKinematicsEngine {
+class SerialDH_KinematicsEngine : public IForwardKinematicsSolver {
 public:
 	/**
 	 * @brief Constructs a D-H kinematics engine for a given kinematic chain.
@@ -29,16 +29,9 @@ public:
 	std::vector<Eigen::Matrix4d> calculateAllLinkPoses(const std::vector<double>& joint_positions) const override;
 
 	/**
-	 * @brief Calculates analytical inverse kinematics for a 2-link planar robot.
-	 * @param target_position The desired 3D position of the end-effector.
-	 * @return A vector containing {theta1, theta2}. Returns an empty vector if unreachable.
-	 */
-	std::vector<double> calculateInverseKinematics(const Eigen::Vector3d& target_position) const override;
-
-	/**
-	 * @brief Gets the number of joints in the engine's kinematic chain.
-	 * @return The number of joints.
-	 */
+	* @brief Gets the number of joints in the engine's kinematic chain.
+	* @return The number of joints.
+	*/
 	size_t getNumJoints() const override;
 
 private:

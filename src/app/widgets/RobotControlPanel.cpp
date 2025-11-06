@@ -61,7 +61,7 @@ void RobotControlPanel::createJointControls(int num_joints)
 				}
 			);
 		}
-		
+
 		joint_group_box->setLayout(group_box_layout);
 		dynamic_layout->addWidget(joint_group_box);
 	}
@@ -108,6 +108,11 @@ void RobotControlPanel::setupUI()
 
 	// Solve buttton
 	solve_ik_button_ = new QPushButton("Solve IK");
+	connect(solve_ik_button_, &QPushButton::clicked, this, [this]() {
+		const double x = target_x_spin_box_->value();
+		const double y = target_y_spin_box_->value();
+		emit solveIKRequested(x, y);
+		});
 	ik_layout->addWidget(solve_ik_button_, 2, 0, 1, 2); // span button across 2 columns
 
 	target_x_spin_box_->setRange(-10.0, 10.0);

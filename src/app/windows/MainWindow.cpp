@@ -54,6 +54,8 @@ MainWindow::MainWindow(QWidget* parent)
 		});
 
 	connect(stop_button, &QPushButton::clicked, animation_timer_, &QTimer::stop);
+
+	connect(control_panel_, &RobotControlPanel::solveIKRequested, this, &MainWindow::onSolveIKRequested);
 }
 
 // --- Load Robot ---
@@ -78,6 +80,21 @@ void MainWindow::runAnimationStep()
 {
 	joint_positions_[0] += 0.01;
 	updateVisualization();
+}
+
+void MainWindow::onSolveIKRequested(double x, double y)
+{
+	if (!robot_) { return; }
+	Eigen::Vector3d target_position(x, y, 0.0);
+	const std::vector<double> solution = robot_->solveInverseKinematics(target_position);
+	if (!solution.empty()) {
+		qDebug() << "IK Solution FOUND:" << solution[0] << "," << solution[1];
+		joint_positions_ = solution;
+		updateVisualization();
+	}
+	else {
+		qDebug() << "IK Solution NOT found (target may be unreachable)."; 
+	}
 }
 
 // --- Visualization Update ---

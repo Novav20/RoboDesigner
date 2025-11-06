@@ -61,6 +61,7 @@ signals:
 	 */
 	void jointParameterChanged(int link_index, DHParameterIndex param_index, double value);
 
+	void solveIKRequested(double x, double y);
 private:
 	// The main vertical layout that holds all the joint group boxes.
 	QVBoxLayout* main_layout_;

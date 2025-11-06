@@ -6,6 +6,7 @@
 
 class QVBoxLayout;
 class QDoubleSpinBox;
+class QPushButton;
 /**
  * @class RobotControlPanel
  * @brief A composite widget for displaying and editing robot parameters.
@@ -63,6 +64,10 @@ signals:
 private:
 	// The main vertical layout that holds all the joint group boxes.
 	QVBoxLayout* main_layout_;
-
 	std::vector<QDoubleSpinBox*> joint_spin_boxes_;
+	QDoubleSpinBox* target_x_spin_box_;
+	QDoubleSpinBox* target_y_spin_box_;
+	QPushButton* solve_ik_button_;
+	QWidget* dynamic_controls_host_;
+	void setupUI();
 };

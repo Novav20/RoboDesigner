@@ -1,31 +1,38 @@
 #include "RobotControlPanel.h"
 #include <QGroupBox>
 #include <QGridLayout>
+#include <iostream>
 #include <QLabel>
 #include <QDoubleSpinBox>
-#include <iostream>
+#include <QPushButton>
 
-RobotControlPanel::RobotControlPanel(QWidget* parent)
-	: QWidget(parent)
-{
+RobotControlPanel::RobotControlPanel(QWidget* parent) : QWidget(parent) {
 	main_layout_ = new QVBoxLayout(this);
+
+	// Create a container widget for the dynamic controls
+	dynamic_controls_host_ = new QWidget();
+	dynamic_controls_host_->setLayout(new QVBoxLayout()); // Give it its own layout
+
+	main_layout_->addWidget(dynamic_controls_host_); // Add host to main layout
+
+	setupUI(); // Sets up the static IK box
+
+	main_layout_->addStretch(); // Add the final stretch
 }
 
 void RobotControlPanel::createJointControls(int num_joints)
 {
-	// Clear any existing widgets from the layout.
-	QLayoutItem* item;
-	while ((item = main_layout_->takeAt(0)) != nullptr) {
-		if (item->widget()) {
-			delete item->widget();
-		}
-		delete item;
-	}
+	// Delete the old host widget and all its children
+	delete dynamic_controls_host_;
+	joint_spin_boxes_.clear();
+
+	// Create a new, empty host
+	dynamic_controls_host_ = new QWidget();
+	auto* dynamic_layout = new QVBoxLayout(dynamic_controls_host_);
+	dynamic_layout->setContentsMargins(0, 0, 0, 0); // makes it look tighter
 
 	// A list of D-H parameter labels for the UI.
 	const QStringList param_labels = { "Theta (rad)", "d (m)", "a (m)", "Alpha (rad)" };
-
-	joint_spin_boxes_.clear();
 
 	for (int i = 0; i < num_joints; ++i) {
 		auto* joint_group_box = new QGroupBox(QString("Link %1").arg(i + 1));
@@ -48,23 +55,18 @@ void RobotControlPanel::createJointControls(int num_joints)
 			group_box_layout->addWidget(param_spin_box, j, 1);
 
 			// --- Connecting the Dynamic Widget ---
-			// We use a C++ lambda function to capture the context (the link index 'i'
-			// and the parameter index 'j'). When the spin box's valueChanged signal
-			// is emitted, this lambda will execute.
 			connect(param_spin_box, &QDoubleSpinBox::valueChanged, this,
 				[this, link_index = i, param_index = static_cast<DHParameterIndex>(j)](double value) {
-					// Inside the lambda, we emit our own public signal, passing along
-					// all the necessary context.
 					emit jointParameterChanged(link_index, param_index, value);
 				}
 			);
 		}
-
+		
 		joint_group_box->setLayout(group_box_layout);
-		main_layout_->addWidget(joint_group_box);
+		dynamic_layout->addWidget(joint_group_box);
 	}
-
-	main_layout_->addStretch();
+	// Insert the new host widget at the top of the main layout
+	main_layout_->insertWidget(0, dynamic_controls_host_);
 }
 
 void RobotControlPanel::setJointPositions(const std::vector<double>& positions)
@@ -87,4 +89,30 @@ std::vector<double> RobotControlPanel::getJointPositions() const
 		joint_positions.push_back(spin_box->value());
 	}
 	return joint_positions;
+}
+
+void RobotControlPanel::setupUI()
+{
+	auto* ik_group_box = new QGroupBox("Inverse Kinematics");
+	auto* ik_layout = new QGridLayout();
+
+	// Target x
+	ik_layout->addWidget(new QLabel("Target x (m):"), 0, 0);
+	target_x_spin_box_ = new QDoubleSpinBox();
+	ik_layout->addWidget(target_x_spin_box_, 0, 1);
+
+	// Target y
+	ik_layout->addWidget(new QLabel("Target y (m):"), 1, 0);
+	target_y_spin_box_ = new QDoubleSpinBox();
+	ik_layout->addWidget(target_y_spin_box_, 1, 1);
+
+	// Solve buttton
+	solve_ik_button_ = new QPushButton("Solve IK");
+	ik_layout->addWidget(solve_ik_button_, 2, 0, 1, 2); // span button across 2 columns
+
+	target_x_spin_box_->setRange(-10.0, 10.0);
+	target_y_spin_box_->setRange(-10.0, 10.0);
+
+	ik_group_box->setLayout(ik_layout);
+	main_layout_->addWidget(ik_group_box);
 }

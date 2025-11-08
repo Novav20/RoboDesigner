@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QTimer>
 #include <QSizePolicy>
+#include <QStatusBar>
 
 #include <RoboDesignerCore/primitives/SerialRobot.h>
 
@@ -20,6 +21,7 @@ MainWindow::MainWindow(QWidget* parent)
 	// --- Central Widget Setup ---
 	auto* central_widget = new QWidget(this);
 	setCentralWidget(central_widget);
+	statusBar()->showMessage("Ready.");
 
 	auto* main_layout = new QHBoxLayout(central_widget);
 	auto* left_panel_container = new QWidget();
@@ -54,6 +56,8 @@ MainWindow::MainWindow(QWidget* parent)
 		});
 
 	connect(stop_button, &QPushButton::clicked, animation_timer_, &QTimer::stop);
+
+	connect(control_panel_, &RobotControlPanel::solveIKRequested, this, &MainWindow::onSolveIKRequested);
 }
 
 // --- Load Robot ---
@@ -78,6 +82,25 @@ void MainWindow::runAnimationStep()
 {
 	joint_positions_[0] += 0.01;
 	updateVisualization();
+}
+
+void MainWindow::onSolveIKRequested(double x, double y, bool use_elbow_down)
+{
+	if (!robot_) { return; }
+	const auto solution_index = use_elbow_down ? 1 : 0;
+
+	Eigen::Vector3d target_position(x, y, 0.0);
+	const std::vector<double> solution = robot_->solveInverseKinematics(target_position, solution_index);
+	if (!solution.empty()) {
+		statusBar()->showMessage(
+			QString("IK Solution FOUND: %1, %2").arg(solution[0]).arg(solution[1])
+		);
+		joint_positions_ = solution;
+		updateVisualization();
+	}
+	else {
+		statusBar()->showMessage("IK Solution not found: Target is unreachable.", 5000);
+	}
 }
 
 // --- Visualization Update ---

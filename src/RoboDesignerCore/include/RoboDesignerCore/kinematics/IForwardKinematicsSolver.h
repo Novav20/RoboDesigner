@@ -12,14 +12,14 @@
  * Strategy design pattern, allowing different kinematic algorithms (e.g.,
  * Denavit-Hartenberg, Product of Exponentials) to be used interchangeably.
  */
-class IKinematicsEngine {
+class IForwardKinematicsSolver {
 public:
 	/**
 	 * @brief Virtual destructor.
 	 * Ensures that the destructor of the derived class is called correctly
 	 * when an object is deleted through a base class pointer.
 	 */
-	virtual ~IKinematicsEngine() = default;
+	virtual ~IForwardKinematicsSolver() = default;
 
 	/**
 	 * @brief Calculates the forward kinematics for a given set of joint positions.
@@ -35,7 +35,7 @@ public:
 			return Eigen::Matrix4d::Identity();
 		}
 		return all_poses.back();
-	}
+	};
 
 	/**
 	* @brief Returns the number of joints/links in the kinematic chain.

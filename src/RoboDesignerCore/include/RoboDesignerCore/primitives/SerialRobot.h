@@ -58,7 +58,7 @@ public:
 	*/
 	std::vector<Eigen::Matrix4d> getAllLinkPoses(const std::vector<double>& joint_positions) const;
 
-	std::vector<double> solveInverseKinematics(const Eigen::Vector3d& target_position) const;
+	std::vector<double> solveInverseKinematics(const Eigen::Vector3d& target_position, int solution_index = 0) const;
 private:
 	std::string name_;
 	std::unique_ptr<IForwardKinematicsSolver> fk_solver_;

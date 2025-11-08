@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QDoubleSpinBox>
 #include <QPushButton>
+#include <QCheckBox>
 
 RobotControlPanel::RobotControlPanel(QWidget* parent) : QWidget(parent) {
 	main_layout_ = new QVBoxLayout(this);
@@ -106,15 +107,21 @@ void RobotControlPanel::setupUI()
 	target_y_spin_box_ = new QDoubleSpinBox();
 	ik_layout->addWidget(target_y_spin_box_, 1, 1);
 
+
 	// Solve buttton
 	solve_ik_button_ = new QPushButton("Solve IK");
+	ik_layout->addWidget(solve_ik_button_, 2, 0, 1, 2); // span button across 2 columns
+
+	//TODO: Refactor in MVP 1.1
+	elbow_down_checkbox_ = new QCheckBox("Use Elbow Down Solution");
+	ik_layout->addWidget(elbow_down_checkbox_, 3, 0, 1, 2);
+
 	connect(solve_ik_button_, &QPushButton::clicked, this, [this]() {
 		const double x = target_x_spin_box_->value();
 		const double y = target_y_spin_box_->value();
-		emit solveIKRequested(x, y);
+		const bool use_elbow_down = elbow_down_checkbox_->isChecked();
+		emit solveIKRequested(x, y, use_elbow_down);
 		});
-	ik_layout->addWidget(solve_ik_button_, 2, 0, 1, 2); // span button across 2 columns
-
 	target_x_spin_box_->setRange(-10.0, 10.0);
 	target_y_spin_box_->setRange(-10.0, 10.0);
 

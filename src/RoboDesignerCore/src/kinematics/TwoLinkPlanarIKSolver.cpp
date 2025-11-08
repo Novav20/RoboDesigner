@@ -5,7 +5,7 @@ TwoLinkPlanarIKSolver::TwoLinkPlanarIKSolver(double link_length_1, double link_l
 {
 }
 
-std::vector<double> TwoLinkPlanarIKSolver::solve(const Eigen::Vector3d& target_position) const
+std::vector<double> TwoLinkPlanarIKSolver::solve(const Eigen::Vector3d& target_position, int solution_index) const
 {
     const double x = target_position.x();
     const double y = target_position.y();
@@ -28,10 +28,15 @@ std::vector<double> TwoLinkPlanarIKSolver::solve(const Eigen::Vector3d& target_p
         return {}; // Target is physically unreachable.
     }
     cos_theta2 = std::clamp(cos_theta2, -1.0, 1.0);
-
-    const double theta2 = -acos(cos_theta2); // Elbow up solution
-    const double sin_theta2 = sin(theta2);
-
+    
+    double sin_theta2;
+    if (solution_index == 1) {
+        sin_theta2 = sqrt(1.0 - cos_theta2 * cos_theta2);
+    }
+    else {
+        sin_theta2 = -sqrt(1.0 - cos_theta2 * cos_theta2);
+    }
+    const double theta2 = atan2(sin_theta2, cos_theta2);
     const double theta1 = atan2(y, x) - atan2(link_length_2_ * sin_theta2, link_length_1_ + link_length_2_ * cos_theta2);
 
     return { theta1, theta2 };

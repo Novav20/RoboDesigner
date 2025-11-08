@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QTimer>
 #include <QSizePolicy>
+#include <QStatusBar>
 
 #include <RoboDesignerCore/primitives/SerialRobot.h>
 
@@ -20,6 +21,7 @@ MainWindow::MainWindow(QWidget* parent)
 	// --- Central Widget Setup ---
 	auto* central_widget = new QWidget(this);
 	setCentralWidget(central_widget);
+	statusBar()->showMessage("Ready.");
 
 	auto* main_layout = new QHBoxLayout(central_widget);
 	auto* left_panel_container = new QWidget();
@@ -82,18 +84,20 @@ void MainWindow::runAnimationStep()
 	updateVisualization();
 }
 
-void MainWindow::onSolveIKRequested(double x, double y)
+void MainWindow::onSolveIKRequested(double x, double y, bool use_elbow_down)
 {
 	if (!robot_) { return; }
+	const auto solution_index = use_elbow_down ? 1 : 0;
+
 	Eigen::Vector3d target_position(x, y, 0.0);
-	const std::vector<double> solution = robot_->solveInverseKinematics(target_position);
+	const std::vector<double> solution = robot_->solveInverseKinematics(target_position, solution_index);
 	if (!solution.empty()) {
 		qDebug() << "IK Solution FOUND:" << solution[0] << "," << solution[1];
 		joint_positions_ = solution;
 		updateVisualization();
 	}
 	else {
-		qDebug() << "IK Solution NOT found (target may be unreachable)."; 
+		statusBar()->showMessage("IK Solution not found: Target is unreachable.", 5000);
 	}
 }
 

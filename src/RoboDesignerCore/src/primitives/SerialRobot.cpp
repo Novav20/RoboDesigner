@@ -53,10 +53,10 @@ std::vector<Eigen::Matrix4d> SerialRobot::getAllLinkPoses(const std::vector<doub
 	return fk_solver_->calculateAllLinkPoses(joint_positions);
 }
 
-std::vector<double> SerialRobot::solveInverseKinematics(const Eigen::Vector3d& target_position) const
+std::vector<double> SerialRobot::solveInverseKinematics(const Eigen::Vector3d& target_position, int solution_index) const
 {
 	if (ik_solver_ ) {
-		return ik_solver_->solve(target_position);
+		return ik_solver_->solve(target_position, solution_index);
 	}
 	return {};
 }

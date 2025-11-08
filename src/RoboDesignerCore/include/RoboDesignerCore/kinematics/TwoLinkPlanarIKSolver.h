@@ -6,7 +6,7 @@ class TwoLinkPlanarIKSolver : public IInverseKinematicsSolver
 {
 public:
 	explicit TwoLinkPlanarIKSolver(double link_length_1, double link_length_2);
-	std::vector<double> solve(const Eigen::Vector3d& target_position) const override;
+	std::vector<double> solve(const Eigen::Vector3d& target_position, int solution_index = 0) const override;
 	
 private:
 	double link_length_1_;

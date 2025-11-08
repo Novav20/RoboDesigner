@@ -47,7 +47,7 @@ private slots:
     void onParameterChanged(int link_index, DHParameterIndex param_index, double value);
 
     void runAnimationStep();
-    void onSolveIKRequested(double x, double y);
+    void onSolveIKRequested(double x, double y, bool use_elbow_down);
 
 private:
     // Pointers to the main UI components. These are owned by the widget hierarchy.

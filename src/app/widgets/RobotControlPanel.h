@@ -7,6 +7,7 @@
 class QVBoxLayout;
 class QDoubleSpinBox;
 class QPushButton;
+class QCheckBox;
 /**
  * @class RobotControlPanel
  * @brief A composite widget for displaying and editing robot parameters.
@@ -60,8 +61,9 @@ signals:
 	 * @param value The new value of the parameter.
 	 */
 	void jointParameterChanged(int link_index, DHParameterIndex param_index, double value);
-
-	void solveIKRequested(double x, double y);
+signals:
+	//TODO: Refactor in MVP 1.1 to use index instead of flag
+	void solveIKRequested(double x, double y, bool use_elbow_down);
 private:
 	// The main vertical layout that holds all the joint group boxes.
 	QVBoxLayout* main_layout_;
@@ -70,5 +72,6 @@ private:
 	QDoubleSpinBox* target_y_spin_box_;
 	QPushButton* solve_ik_button_;
 	QWidget* dynamic_controls_host_;
+	QCheckBox* elbow_down_checkbox_;
 	void setupUI();
 };

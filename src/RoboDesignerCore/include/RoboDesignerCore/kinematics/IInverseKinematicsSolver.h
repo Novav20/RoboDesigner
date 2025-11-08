@@ -25,5 +25,5 @@ public:
      * @return A vector of the calculated joint angles. Returns an empty vector
      *         if the target is unreachable or no solution is found.
      */
-    virtual std::vector<double> solve(const Eigen::Vector3d& target_position) const = 0;
+    virtual std::vector<double> solve(const Eigen::Vector3d& target_position, int solution_index = 0) const = 0;
 };

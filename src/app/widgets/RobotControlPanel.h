@@ -62,7 +62,15 @@ signals:
 	 */
 	void jointParameterChanged(int link_index, DHParameterIndex param_index, double value);
 signals:
-	//TODO: Refactor in MVP 1.1 to use index instead of flag
+	/**
+	 * @brief Emitted when the user requests an IK solve.
+	 *
+	 * @param x The desired target X-coordinate.
+	 * @param y The desired target Y-coordinate.
+	 * @param use_elbow_down A UI-specific flag indicating if the alternate solution is requested.
+	 * @note The boolean flag is a UI-level convenience that will be translated into a generic
+	 *       solution index by the controller (MainWindow). This is scheduled for refactoring in MVP 1.1.
+	 */
 	void solveIKRequested(double x, double y, bool use_elbow_down);
 private:
 	// The main vertical layout that holds all the joint group boxes.

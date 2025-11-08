@@ -92,7 +92,9 @@ void MainWindow::onSolveIKRequested(double x, double y, bool use_elbow_down)
 	Eigen::Vector3d target_position(x, y, 0.0);
 	const std::vector<double> solution = robot_->solveInverseKinematics(target_position, solution_index);
 	if (!solution.empty()) {
-		qDebug() << "IK Solution FOUND:" << solution[0] << "," << solution[1];
+		statusBar()->showMessage(
+			QString("IK Solution FOUND: %1, %2").arg(solution[0]).arg(solution[1])
+		);
 		joint_positions_ = solution;
 		updateVisualization();
 	}

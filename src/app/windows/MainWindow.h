@@ -47,6 +47,17 @@ private slots:
     void onParameterChanged(int link_index, DHParameterIndex param_index, double value);
 
     void runAnimationStep();
+
+    /**
+     * @brief Slot that receives the request to perform an IK solve from the UI.
+     *
+     * This slot acts as the controller/adapter. It translates the UI-specific request
+     * into a generic call to the backend IK solver, updates the application state,
+     * and triggers a UI refresh.
+     * @param x The target X-coordinate.
+     * @param y The target Y-coordinate.
+     * @param use_elbow_down Flag indicating if the alternate solution should be used.
+     */
     void onSolveIKRequested(double x, double y, bool use_elbow_down);
 
 private:

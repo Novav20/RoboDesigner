@@ -31,12 +31,8 @@ std::vector<double> JacobianTransposeIKSolver::solve(const Eigen::Vector3d& targ
 
 	// Use an Eigen Vector for the internal calculations. It's more efficient for math.
 	Eigen::VectorXd current_q = Eigen::VectorXd::Zero(num_joints);
-
-	const int max_iterations = 100;
-	const double alpha = 0.1;
-	const double tolerance = 1e-4; // A slightly tighter tolerance is better
-
-	for (int i = 0; i < max_iterations; ++i)
+	
+	for (int i = 0; i < max_iterations_; ++i)
 	{
 		// 1. FK
 		// Convert Eigen vector to std::vector for the FK solver interface.
@@ -48,7 +44,7 @@ std::vector<double> JacobianTransposeIKSolver::solve(const Eigen::Vector3d& targ
 		const Eigen::Vector2d error = target_position.head<2>() - p_current.head<2>();
 
 		// 3. Check for convergence
-		if (error.norm() < tolerance) {
+		if (error.norm() < tolerance_) {
 			// Success! Convert the final Eigen vector back to a std::vector to return.
 			return q_vec;
 		}
@@ -57,7 +53,7 @@ std::vector<double> JacobianTransposeIKSolver::solve(const Eigen::Vector3d& targ
 		const Eigen::MatrixXd jacobian = jacobian_solver_->calculateJacobian(all_link_poses);
 
 		// 5. Calculate change in joint angles (delta_q)
-		const Eigen::VectorXd delta_q = alpha * jacobian.transpose() * error;
+		const Eigen::VectorXd delta_q = alpha_ * jacobian.transpose() * error;
 
 		// 6. Update q
 		current_q += delta_q;

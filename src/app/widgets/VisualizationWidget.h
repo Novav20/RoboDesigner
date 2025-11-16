@@ -5,6 +5,8 @@
 #include <Eigen/Dense>
 
 class QPaintEvent;
+class QMouseEvent;
+class QWheelEvent;
 
 /**
  * @class VisualizationWidget
@@ -43,7 +45,19 @@ protected:
      */
     void paintEvent(QPaintEvent* event) override;
 
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
+
+private:
+    QPointF pixelToWorld(const QPointF& pixel_pos) const;
 private:
     // Stores the current set of link poses to be rendered.
     std::vector<Eigen::Matrix4d> robot_poses_;
+    // Stores the IK target position in world coordinates (meters).
+    Eigen::Vector2d ik_target_;
+    // Flag to track if the user is currently dragging the target.
+    bool is_dragging_;
+    double zoom_factor_; // Represents pixels per meter
+
 };

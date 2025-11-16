@@ -6,7 +6,6 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QWidget>
-#include <QDebug>
 #include <QTimer>
 #include <QSizePolicy>
 #include <QStatusBar>

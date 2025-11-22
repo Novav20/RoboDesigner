@@ -60,4 +60,6 @@ private:
     bool is_dragging_;
     double zoom_factor_; // Represents pixels per meter
 
+signals:
+    void targetPositionChanged(double x, double y);
 };

@@ -49,14 +49,12 @@ MainWindow::MainWindow(QWidget* parent)
 	// --- Signal-Slot Connections ---
 	connect(control_panel_, &RobotControlPanel::jointParameterChanged,
 		this, &MainWindow::onParameterChanged);
-
 	connect(start_button, &QPushButton::clicked, animation_timer_, [this]() {
 		animation_timer_->start(33);
 		});
-
 	connect(stop_button, &QPushButton::clicked, animation_timer_, &QTimer::stop);
-
 	connect(control_panel_, &RobotControlPanel::solveIKRequested, this, &MainWindow::onSolveIKRequested);
+	connect(visualization_widget_, &VisualizationWidget::targetPositionChanged, this, &MainWindow::onIKTargetChanged);
 }
 
 // --- Load Robot ---
@@ -90,6 +88,25 @@ void MainWindow::onSolveIKRequested(double x, double y, bool use_elbow_down)
 
 	Eigen::Vector3d target_position(x, y, 0.0);
 	const std::vector<double> solution = robot_->solveInverseKinematics(target_position, solution_index);
+	if (!solution.empty()) {
+		statusBar()->showMessage(
+			QString("IK Solution FOUND: %1, %2").arg(solution[0]).arg(solution[1])
+		);
+		joint_positions_ = solution;
+		updateVisualization();
+	}
+	else {
+		statusBar()->showMessage("IK Solution not found: Target is unreachable.", 5000);
+
+	}
+}
+
+void MainWindow::onIKTargetChanged(double x, double y)
+{
+	if (!robot_) return;
+	Eigen::Vector3d target_position(x, y, 0.0);
+	const std::vector<double> solution = robot_->solveInverseKinematics(target_position);
+
 	if (!solution.empty()) {
 		statusBar()->showMessage(
 			QString("IK Solution FOUND: %1, %2").arg(solution[0]).arg(solution[1])

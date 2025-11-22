@@ -60,6 +60,8 @@ private slots:
      */
     void onSolveIKRequested(double x, double y, bool use_elbow_down);
 
+    void onIKTargetChanged(double x, double y);
+
 private:
     // Pointers to the main UI components. These are owned by the widget hierarchy.
     RobotControlPanel* control_panel_;

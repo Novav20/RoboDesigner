@@ -105,6 +105,8 @@ void VisualizationWidget::mouseMoveEvent(QMouseEvent* event)
 	// Update the ik_target_ with the clamped values
 	ik_target_ = Eigen::Vector2d(clamped_x, clamped_y);
 
+	emit targetPositionChanged(ik_target_.x(), ik_target_.y());
+
 	update();
 
 }

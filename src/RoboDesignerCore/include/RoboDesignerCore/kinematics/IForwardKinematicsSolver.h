@@ -4,7 +4,7 @@
 #include <vector>
 
 /**
- * @class IKinematicsEngine
+ * @class IForwardKinematicsSolver
  * @brief An interface for forward kinematics solvers.
  *
  * This abstract base class defines the contract for any class that can solve

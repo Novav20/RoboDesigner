@@ -38,6 +38,14 @@ public:
      */
     void updateRobotPoses(const std::vector<Eigen::Matrix4d>& poses);
 
+signals:
+    /**
+     * @brief Emitted when the user updates the IK target position via interaction.
+     * @param x Target x-coordinate in world units (meters).
+     * @param y Target y-coordinate in world units (meters).
+     */
+    void targetPositionChanged(double x, double y);
+
 protected:
     /**
      * @brief Overridden paint event to perform all custom drawing.
@@ -45,13 +53,24 @@ protected:
      */
     void paintEvent(QPaintEvent* event) override;
 
+    /**
+     * @brief Handles mouse press to begin target dragging.
+     */
     void mousePressEvent(QMouseEvent* event) override;
+    /**
+     * @brief Handles mouse move to update target while dragging.
+     */
     void mouseMoveEvent(QMouseEvent* event) override;
+    /**
+     * @brief Handles mouse release to end target dragging.
+     */
     void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
+    /**
+     * @brief Converts a pixel coordinate to world space using current zoom.
+     */
     QPointF pixelToWorld(const QPointF& pixel_pos) const;
-private:
     // Stores the current set of link poses to be rendered.
     std::vector<Eigen::Matrix4d> robot_poses_;
     // Stores the IK target position in world coordinates (meters).
@@ -59,7 +78,4 @@ private:
     // Flag to track if the user is currently dragging the target.
     bool is_dragging_;
     double zoom_factor_; // Represents pixels per meter
-
-signals:
-    void targetPositionChanged(double x, double y);
 };

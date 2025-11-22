@@ -46,6 +46,9 @@ private slots:
      */
     void onParameterChanged(int link_index, DHParameterIndex param_index, double value);
 
+    /**
+     * @brief Advances the simple animation timer one step and refreshes the view.
+     */
     void runAnimationStep();
 
     /**
@@ -60,6 +63,9 @@ private slots:
      */
     void onSolveIKRequested(double x, double y, bool use_elbow_down);
 
+    /**
+     * @brief Handles updates to the IK target from the visualization widget.
+     */
     void onIKTargetChanged(double x, double y);
 
 private:
@@ -76,5 +82,8 @@ private:
 
     QTimer* animation_timer_;
 
+    /**
+     * @brief Updates the visualization widget with the latest robot state.
+     */
     void updateVisualization();
 };

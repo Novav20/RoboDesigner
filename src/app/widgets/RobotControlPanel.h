@@ -61,7 +61,6 @@ signals:
 	 * @param value The new value of the parameter.
 	 */
 	void jointParameterChanged(int link_index, DHParameterIndex param_index, double value);
-signals:
 	/**
 	 * @brief Emitted when the user requests an IK solve.
 	 *
@@ -72,6 +71,7 @@ signals:
 	 *       solution index by the controller (MainWindow). This is scheduled for refactoring in MVP 1.1.
 	 */
 	void solveIKRequested(double x, double y, bool use_elbow_down);
+
 private:
 	// The main vertical layout that holds all the joint group boxes.
 	QVBoxLayout* main_layout_;
@@ -81,5 +81,8 @@ private:
 	QPushButton* solve_ik_button_;
 	QWidget* dynamic_controls_host_;
 	QCheckBox* elbow_down_checkbox_;
+	/**
+	 * @brief Initializes and lays out child widgets and connections.
+	 */
 	void setupUI();
 };

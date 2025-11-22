@@ -1,6 +1,9 @@
 #include <RoboDesignerCore/primitives/SerialRobot.h>
 #include <RoboDesignerCore/kinematics/SerialDH_KinematicsEngine.h>
 #include <RoboDesignerCore/kinematics/TwoLinkPlanarIKSolver.h>
+#include <RoboDesignerCore/kinematics/JacobianTransposeIKSolver.h>
+#include <RoboDesignerCore/kinematics/JacobianSolver.h>
+#include <iostream>
 
 SerialRobot::SerialRobot(const std::string& name, std::unique_ptr<IForwardKinematicsSolver> fk_solver, std::unique_ptr<IInverseKinematicsSolver> ik_solver)
 	: name_(name), fk_solver_(std::move(fk_solver)), ik_solver_(std::move(ik_solver))
@@ -37,12 +40,28 @@ std::unique_ptr<SerialRobot> SerialRobot::createTwoLinkPlanar() {
 		Link({.theta_ = 0, .d_ = 0, .a_ = link_length_2, .alpha_ = 0})
 	};
 
-	auto fk_solver = std::make_unique<SerialDH_KinematicsEngine>(robot_links);
-	auto ik_solver = std::make_unique<TwoLinkPlanarIKSolver>(link_length_1, link_length_2);
+	// 1. Create the FK solver for the Robot
+	auto fk_solver_for_robot = std::make_unique<SerialDH_KinematicsEngine>(robot_links);
 
-	return std::make_unique<SerialRobot>("2-Link Planar Robot",
-		std::move(fk_solver),
-		std::move(ik_solver));
+	// 2. Create a SECOND, independent FK solver for the IK engine
+	auto fk_solver_for_ik = std::make_unique<SerialDH_KinematicsEngine>(robot_links);
+
+	auto jacobian_solver = std::make_unique<JacobianSolver>(robot_links);
+
+	// 3. Give the second copy to the IK solver
+	auto ik_solver = std::make_unique<JacobianTransposeIKSolver>(
+		std::move(fk_solver_for_ik),
+		std::move(jacobian_solver),
+		500,
+		1e-3,
+		0.2
+	);
+
+	// 4. Give the first copy to the Robot
+	return std::make_unique<SerialRobot>("2-Link Planar Robot (Numerical IK)",
+		std::move(fk_solver_for_robot),
+		std::move(ik_solver)
+	);
 }
 
 std::vector<Eigen::Matrix4d> SerialRobot::getAllLinkPoses(const std::vector<double>& joint_positions) const
@@ -55,8 +74,10 @@ std::vector<Eigen::Matrix4d> SerialRobot::getAllLinkPoses(const std::vector<doub
 
 std::vector<double> SerialRobot::solveInverseKinematics(const Eigen::Vector3d& target_position, int solution_index) const
 {
-	if (ik_solver_ ) {
+	if (ik_solver_) {
 		return ik_solver_->solve(target_position, solution_index);
 	}
 	return {};
 }
+
+

@@ -3,6 +3,7 @@
 #include <QFrame>
 #include <vector>
 #include <Eigen/Dense>
+#include <QPointF>
 
 class QPaintEvent;
 class QMouseEvent;
@@ -37,6 +38,8 @@ public:
      *              where each matrix represents the pose of a link's frame.
      */
     void updateRobotPoses(const std::vector<Eigen::Matrix4d>& poses);
+
+    void setWorkspacePoints(const std::vector<QPointF>& points);
 
 signals:
     /**
@@ -78,4 +81,5 @@ private:
     // Flag to track if the user is currently dragging the target.
     bool is_dragging_;
     double zoom_factor_; // Represents pixels per meter
+    std::vector<QPointF> workspace_points_;
 };

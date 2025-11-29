@@ -20,6 +20,12 @@ void VisualizationWidget::updateRobotPoses(const std::vector<Eigen::Matrix4d>& p
 	update(); // Schedule a repaint
 }
 
+void VisualizationWidget::setWorkspacePoints(const std::vector<QPointF>& points)
+{
+	workspace_points_ = points;
+	update();
+}
+
 void VisualizationWidget::paintEvent(QPaintEvent* event)
 {
 	// Call base class first
@@ -34,13 +40,23 @@ void VisualizationWidget::paintEvent(QPaintEvent* event)
 	// Scale and flip Y-axis
 	painter.scale(zoom_factor_, -zoom_factor_);
 
+	// Draw workspace point cloud
+	if (!workspace_points_.empty()) {
+		QPen cloud_pen(Qt::gray);
+		cloud_pen.setWidth(2);
+		cloud_pen.setCosmetic(true); // Keep size constant despite zoom
+		painter.setPen(cloud_pen);
+
+		// Efficiently draw all points in one call
+		painter.drawPoints(workspace_points_.data(), static_cast<int>(workspace_points_.size()));
+	}
+
 	QPointF previous_point(0.0, 0.0);
 
 	// Pen for the links
 	QPen link_pen(Qt::white);
 	link_pen.setWidth(2);
 	link_pen.setCosmetic(true);
-
 
 	QBrush joint_brush(Qt::cyan);
 

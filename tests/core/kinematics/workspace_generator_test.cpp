@@ -1,17 +1,17 @@
 #include <gtest/gtest.h>
-#include <RoboDesignerCore/kinematics/WorkspaceGenerator.h>
+#include <RoboDesignerCore/kinematics/MonteCarloWorkspaceGenerator.h>
 #include <RoboDesignerCore/primitives/Link.h>
 #include <RoboDesignerCore/kinematics/SerialDH_KinematicsEngine.h>
 #include <Eigen/Dense>
 
 namespace RoboDesigner::CoreTests {
-	TEST(WorkspaceGeneratorTests, GeneratesPointsWithinReach) {
+	TEST(MonteCarloWorkspaceGeneratorTests, GeneratesPointsWithinReach) {
 		// Arrange
 		const double link_length_1 = 1.0;
 		const double link_length_2 = 0.8;
 		const std::vector<Link> robot_links = { Link({0,0,link_length_1,0}), Link({0,0,link_length_2,0}) };
 		const SerialDH_KinematicsEngine fk_solver(robot_links);
-		WorkspaceGenerator workspace_generator(fk_solver);
+		MonteCarloWorkspaceGenerator workspace_generator(fk_solver);
 
 		// Act
 		auto points = workspace_generator.generate(1000);

@@ -80,4 +80,12 @@ std::vector<double> SerialRobot::solveInverseKinematics(const Eigen::Vector3d& t
 	return {};
 }
 
+const IForwardKinematicsSolver* SerialRobot::getForwardKinematicsSolver() const
+{
+	if (!fk_solver_) {
+		return {};
+	}
+	return fk_solver_.get();
+}
+
 

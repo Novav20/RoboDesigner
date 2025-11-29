@@ -67,6 +67,8 @@ public:
 	* @return A vector of joint angles, or an empty vector if no solver is attached or no solution is found.
 	*/
 	std::vector<double> solveInverseKinematics(const Eigen::Vector3d& target_position, int solution_index = 0) const;
+	const IForwardKinematicsSolver* getForwardKinematicsSolver() const;
+
 private:
 	std::string name_;
 	std::unique_ptr<IForwardKinematicsSolver> fk_solver_;

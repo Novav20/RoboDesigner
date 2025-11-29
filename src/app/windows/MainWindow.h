@@ -37,6 +37,7 @@ public:
      */
     void loadRobot(SerialRobot* robot);
 
+
 private slots:
     /**
      * @brief Slot that receives notifications when a robot parameter is changed in the UI.
@@ -67,6 +68,8 @@ private slots:
      * @brief Handles updates to the IK target from the visualization widget.
      */
     void onIKTargetChanged(double x, double y);
+
+    void onWorkspaceGenerationRequested(int samples);
 
 private:
     // Pointers to the main UI components. These are owned by the widget hierarchy.

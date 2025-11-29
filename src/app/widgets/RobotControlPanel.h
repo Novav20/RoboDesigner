@@ -8,6 +8,7 @@ class QVBoxLayout;
 class QDoubleSpinBox;
 class QPushButton;
 class QCheckBox;
+class QSpinBox;
 /**
  * @class RobotControlPanel
  * @brief A composite widget for displaying and editing robot parameters.
@@ -61,6 +62,7 @@ signals:
 	 * @param value The new value of the parameter.
 	 */
 	void jointParameterChanged(int link_index, DHParameterIndex param_index, double value);
+signals:
 	/**
 	 * @brief Emitted when the user requests an IK solve.
 	 *
@@ -72,6 +74,9 @@ signals:
 	 */
 	void solveIKRequested(double x, double y, bool use_elbow_down);
 
+signals:
+	void workspaceGenerationRequested(int samples);
+
 private:
 	// The main vertical layout that holds all the joint group boxes.
 	QVBoxLayout* main_layout_;
@@ -81,6 +86,8 @@ private:
 	QPushButton* solve_ik_button_;
 	QWidget* dynamic_controls_host_;
 	QCheckBox* elbow_down_checkbox_;
+	QSpinBox* samples_spin_box_;
+	QPushButton* generate_workspace_button_;
 	/**
 	 * @brief Initializes and lays out child widgets and connections.
 	 */

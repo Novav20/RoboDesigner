@@ -11,6 +11,7 @@
 #include <QStatusBar>
 
 #include <RoboDesignerCore/primitives/SerialRobot.h>
+#include <RoboDesignerCore/kinematics/MonteCarloWorkspaceGenerator.h>
 
 // --- Constructor ---
 MainWindow::MainWindow(QWidget* parent)
@@ -55,6 +56,7 @@ MainWindow::MainWindow(QWidget* parent)
 	connect(stop_button, &QPushButton::clicked, animation_timer_, &QTimer::stop);
 	connect(control_panel_, &RobotControlPanel::solveIKRequested, this, &MainWindow::onSolveIKRequested);
 	connect(visualization_widget_, &VisualizationWidget::targetPositionChanged, this, &MainWindow::onIKTargetChanged);
+	connect(control_panel_, &RobotControlPanel::workspaceGenerationRequested, this, &MainWindow::onWorkspaceGenerationRequested);
 }
 
 // --- Load Robot ---
@@ -117,6 +119,27 @@ void MainWindow::onIKTargetChanged(double x, double y)
 	else {
 		statusBar()->showMessage("IK Solution not found: Target is unreachable.", 5000);
 	}
+}
+
+void MainWindow::onWorkspaceGenerationRequested(int samples)
+{
+	if (!robot_) return;
+
+	// 1. Create the generator, injecting the robot's FK solver
+	MonteCarloWorkspaceGenerator generator(*robot_->getForwardKinematicsSolver());
+
+	// TODO: 2. Run the simulation (This blocks the UI for now)
+	const std::vector<Eigen::Vector2d> eigen_points = generator.generate(samples);
+
+	// 3. Convert Eigen types to Qt types for the view
+	std::vector<QPointF> qt_points;
+	qt_points.reserve(eigen_points.size());
+	for (const auto& p : eigen_points) {
+		qt_points.emplace_back(p.x(), p.y());
+	}
+
+	// 4. Update the view
+	visualization_widget_->setWorkspacePoints(qt_points);
 }
 
 // --- Visualization Update ---

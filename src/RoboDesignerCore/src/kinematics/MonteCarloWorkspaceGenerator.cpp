@@ -1,14 +1,14 @@
-#include <RoboDesignerCore/kinematics/WorkspaceGenerator.h>
+#include <RoboDesignerCore/kinematics/MonteCarloWorkspaceGenerator.h>
 #include <RoboDesignerCore/kinematics/IForwardKinematicsSolver.h>
 #include <random>
 #include <numbers>
 
-WorkspaceGenerator::WorkspaceGenerator(const IForwardKinematicsSolver& fk_solver)
+MonteCarloWorkspaceGenerator::MonteCarloWorkspaceGenerator(const IForwardKinematicsSolver& fk_solver)
 	: fk_solver_(fk_solver)
 {
 }
 
-std::vector<Eigen::Vector2d> WorkspaceGenerator::generate(int samples)
+std::vector<Eigen::Vector2d> MonteCarloWorkspaceGenerator::generate(int samples)
 {
 	std::vector<Eigen::Vector2d> points;
 	points.reserve(samples); // Avoid reallocations

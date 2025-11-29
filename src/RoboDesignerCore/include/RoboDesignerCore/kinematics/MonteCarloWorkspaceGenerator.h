@@ -4,21 +4,21 @@
 #include <RoboDesignerCore/kinematics/IForwardKinematicsSolver.h>
 
 /**
- * @class WorkspaceGenerator
+ * @class MonteCarloWorkspaceGenerator
  * @brief Generates a point cloud representing the robot's reachable workspace.
  *
  * This class uses the Monte Carlo method (random sampling) to estimate the
  * workspace. It randomly samples joint configurations within their limits
  * (currently -PI to +PI) and calculates the resulting end-effector positions.
  */
-class WorkspaceGenerator {
+class MonteCarloWorkspaceGenerator {
 public:
     /**
      * @brief Constructs the generator.
      * @param fk_solver Reference to the solver used to calculate poses.
      *                  The solver MUST outlive this generator instance.
      */
-    explicit WorkspaceGenerator(const IForwardKinematicsSolver& fk_solver);
+    explicit MonteCarloWorkspaceGenerator(const IForwardKinematicsSolver& fk_solver);
 
     /**
      * @brief Runs the Monte Carlo simulation.

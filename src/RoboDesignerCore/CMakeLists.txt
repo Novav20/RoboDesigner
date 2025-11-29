@@ -12,7 +12,7 @@ add_library(RoboDesignerCore STATIC
 	"include/RoboDesignerCore/kinematics/IJacobianSolver.h" 
 	"include/RoboDesignerCore/kinematics/JacobianSolver.h" "src/kinematics/JacobianSolver.cpp" 
 	"include/RoboDesignerCore/kinematics/JacobianTransposeIKSolver.h" "src/kinematics/JacobianTransposeIKSolver.cpp"
-	"include/RoboDesignerCore/kinematics/WorkspaceGenerator.h" "src/kinematics/WorkspaceGenerator.cpp"
+	"include/RoboDesignerCore/kinematics/MonteCarloWorkspaceGenerator.h" "src/kinematics/MonteCarloWorkspaceGenerator.cpp"
 
 )
 

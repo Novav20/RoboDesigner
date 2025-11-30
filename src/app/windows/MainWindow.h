@@ -89,7 +89,7 @@ private:
 
     QTimer* animation_timer_;
 
-    QFutureWatcher<std::vector<QPointF>> workspace_watcher_;
+    QFutureWatcher<std::pair<std::vector<QPointF>, double>> workspace_watcher_;
 
     /**
      * @brief Updates the visualization widget with the latest robot state.

@@ -14,7 +14,8 @@ namespace RoboDesigner::CoreTests {
 		MonteCarloWorkspaceGenerator workspace_generator(fk_solver);
 
 		// Act
-		auto points = workspace_generator.generate(1000);
+		WorkspaceResult result = workspace_generator.generate(1000);
+		auto& points = result.points;
 
 		// Assert
 		// Sanity Check: Ensure we have some variation.
@@ -33,5 +34,6 @@ namespace RoboDesigner::CoreTests {
 			double distance_from_origin = point.norm();
 			EXPECT_LE(distance_from_origin, 1.8 + 1e-9);
 		}
+		EXPECT_NEAR(result.max_reach, 1.8, 1e-2);
 	}
 }

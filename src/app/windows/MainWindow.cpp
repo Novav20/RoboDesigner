@@ -107,11 +107,14 @@ void MainWindow::onSolveIKRequested(double x, double y, bool use_elbow_down)
 
 void MainWindow::onWorkspaceCalculationFinished()
 {
-	// Get the result from the thread
-	const std::vector<QPointF> points = workspace_watcher_.result();
+	// Get the pair
+	const auto result_pair = workspace_watcher_.result();
 
-	// Update the view
-	visualization_widget_->setWorkspacePoints(points);
+	// Update Visualization
+	visualization_widget_->setWorkspacePoints(result_pair.first);
+
+	// Update Control Panel
+	control_panel_->setMaxReach(result_pair.second);
 
 	statusBar()->showMessage("Workspace generation complete.", 3000);
 }
@@ -145,20 +148,20 @@ void MainWindow::onWorkspaceGenerationRequested(int samples)
 	const auto* fk_solver = robot_->getForwardKinematicsSolver();
 
 	// Define the task to run in the background
-	auto task = [fk_solver, samples]() -> std::vector<QPointF> {
+	auto task = [fk_solver, samples]() -> std::pair<std::vector<QPointF>, double> {
 		// 1. Create generator (thread-local)
 		MonteCarloWorkspaceGenerator generator(*fk_solver);
 
 		// 2. Heavy calculation
-		const auto eigen_points = generator.generate(samples);
+		const auto core_result = generator.generate(samples);
 
 		// 3. Data conversion (also heavy, so do it here)
 		std::vector<QPointF> qt_points;
-		qt_points.reserve(eigen_points.size());
-		for (const auto& p : eigen_points) {
+		qt_points.reserve(core_result.points.size());
+		for (const auto& p : core_result.points) {
 			qt_points.emplace_back(p.x(), p.y());
 		}
-		return qt_points;
+		return { qt_points, core_result.max_reach };
 		};
 
 	// Launch the task and monitor it with the watcher

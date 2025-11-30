@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QCheckBox>
 #include <QSpinBox>
+#include <QLineEdit>
 
 RobotControlPanel::RobotControlPanel(QWidget* parent) : QWidget(parent) {
 	main_layout_ = new QVBoxLayout(this);
@@ -93,6 +94,11 @@ std::vector<double> RobotControlPanel::getJointPositions() const
 	return joint_positions;
 }
 
+void RobotControlPanel::setMaxReach(double reach)
+{
+	max_reach_display_->setText(QString::number(reach, 'f', 4));
+}
+
 //TODO: Rename to a more meaningful name
 void RobotControlPanel::setupUI()
 {
@@ -125,6 +131,9 @@ void RobotControlPanel::setupUI()
 	show_workspace_checkbox_ = new QCheckBox("Show Workspace");
 	show_workspace_checkbox_->setChecked(true);
 
+	max_reach_display_ = new QLineEdit();
+	max_reach_display_->setReadOnly(true);
+
 	connect(generate_workspace_button_, &QPushButton::clicked, this, [this]() {
 		const int samples = samples_spin_box_->value();
 		emit workspaceGenerationRequested(samples);
@@ -135,7 +144,10 @@ void RobotControlPanel::setupUI()
 	workspace_layout->addWidget(samples_spin_box_, 0, 1);
 	workspace_layout->addWidget(generate_workspace_button_, 1, 0, 1, 2); // Span 2 columns
 	workspace_layout->addWidget(show_workspace_checkbox_, 2, 0, 1, 2);
+	workspace_layout->addWidget(new QLabel("Max Reach (m):"), 3, 0);
+	workspace_layout->addWidget(max_reach_display_, 3, 1);
 	workspace_group_box->setLayout(workspace_layout);
+
 
 	//TODO: Refactor in MVP 1.1
 	elbow_down_checkbox_ = new QCheckBox("Use Elbow Down Solution");

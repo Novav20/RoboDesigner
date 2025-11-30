@@ -8,10 +8,9 @@ MonteCarloWorkspaceGenerator::MonteCarloWorkspaceGenerator(const IForwardKinemat
 {
 }
 
-std::vector<Eigen::Vector2d> MonteCarloWorkspaceGenerator::generate(int samples)
-{
-	std::vector<Eigen::Vector2d> points;
-	points.reserve(samples); // Avoid reallocations
+WorkspaceResult MonteCarloWorkspaceGenerator::generate(int samples) {
+	WorkspaceResult result;
+	result.points.reserve(samples); // Avoid reallocations
 
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -33,8 +32,13 @@ std::vector<Eigen::Vector2d> MonteCarloWorkspaceGenerator::generate(int samples)
 		// 2. Solve FK to find where the robot ends up
 		const Eigen::Matrix4d pose = fk_solver_.calculateForwardKinematics(random_config);
 
-		// 3. Extract (x, y) and store it
-		points.emplace_back(pose(0, 3), pose(1, 3));
+		Eigen::Vector2d point(pose(0, 3), pose(1, 3));
+
+		double dist = point.norm();
+
+		if (dist > result.max_reach) result.max_reach = dist;
+
+		result.points.push_back(point);
 	}
-	return points;
+	return result;
 }

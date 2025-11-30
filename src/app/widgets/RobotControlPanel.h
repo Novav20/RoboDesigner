@@ -9,6 +9,7 @@ class QDoubleSpinBox;
 class QPushButton;
 class QCheckBox;
 class QSpinBox;
+class QLineEdit;
 /**
  * @class RobotControlPanel
  * @brief A composite widget for displaying and editing robot parameters.
@@ -54,6 +55,8 @@ public:
 	*/
 	std::vector<double> getJointPositions() const;
 
+	void setMaxReach(double reach);
+
 signals:
 	/**
 	 * @brief Emitted when any D-H parameter is changed in the UI.
@@ -91,6 +94,7 @@ private:
 	QSpinBox* samples_spin_box_;
 	QPushButton* generate_workspace_button_;
 	QCheckBox* show_workspace_checkbox_;
+	QLineEdit* max_reach_display_;
 	/**
 	 * @brief Initializes and lays out child widgets and connections.
 	 */

@@ -57,6 +57,7 @@ MainWindow::MainWindow(QWidget* parent)
 	connect(control_panel_, &RobotControlPanel::solveIKRequested, this, &MainWindow::onSolveIKRequested);
 	connect(visualization_widget_, &VisualizationWidget::targetPositionChanged, this, &MainWindow::onIKTargetChanged);
 	connect(control_panel_, &RobotControlPanel::workspaceGenerationRequested, this, &MainWindow::onWorkspaceGenerationRequested);
+	connect(control_panel_, &RobotControlPanel::showWorkspaceChanged, visualization_widget_, &VisualizationWidget::setShowWorkspace);
 }
 
 // --- Load Robot ---

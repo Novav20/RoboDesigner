@@ -122,13 +122,19 @@ void RobotControlPanel::setupUI()
 	samples_spin_box_->setRange(100, 100000);
 	samples_spin_box_->setValue(1000);
 	generate_workspace_button_ = new QPushButton("Generate Point Cloud");
+	show_workspace_checkbox_ = new QCheckBox("Show Workspace");
+	show_workspace_checkbox_->setChecked(true);
+
 	connect(generate_workspace_button_, &QPushButton::clicked, this, [this]() {
 		const int samples = samples_spin_box_->value();
 		emit workspaceGenerationRequested(samples);
 		});
+	connect(show_workspace_checkbox_,&QCheckBox::toggled, this, &RobotControlPanel::showWorkspaceChanged);
+
 	workspace_layout->addWidget(new QLabel("Samples:"), 0, 0);
 	workspace_layout->addWidget(samples_spin_box_, 0, 1);
 	workspace_layout->addWidget(generate_workspace_button_, 1, 0, 1, 2); // Span 2 columns
+	workspace_layout->addWidget(show_workspace_checkbox_, 2, 0, 1, 2);
 	workspace_group_box->setLayout(workspace_layout);
 
 	//TODO: Refactor in MVP 1.1

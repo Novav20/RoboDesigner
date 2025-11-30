@@ -41,6 +41,8 @@ public:
 
     void setWorkspacePoints(const std::vector<QPointF>& points);
 
+    void setShowWorkspace(bool show);
+
 signals:
     /**
      * @brief Emitted when the user updates the IK target position via interaction.
@@ -82,4 +84,5 @@ private:
     bool is_dragging_;
     double zoom_factor_; // Represents pixels per meter
     std::vector<QPointF> workspace_points_;
+    bool show_workspace_ = true;
 };

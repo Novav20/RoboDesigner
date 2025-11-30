@@ -26,6 +26,12 @@ void VisualizationWidget::setWorkspacePoints(const std::vector<QPointF>& points)
 	update();
 }
 
+void VisualizationWidget::setShowWorkspace(bool show)
+{
+	show_workspace_ = show;
+	update();
+}
+
 void VisualizationWidget::paintEvent(QPaintEvent* event)
 {
 	// Call base class first
@@ -41,10 +47,12 @@ void VisualizationWidget::paintEvent(QPaintEvent* event)
 	painter.scale(zoom_factor_, -zoom_factor_);
 
 	// Draw workspace point cloud
-	if (!workspace_points_.empty()) {
-		QPen cloud_pen(Qt::gray);
+	if (show_workspace_ && !workspace_points_.empty()) {
+		QColor cloud_color(0,100,0,20);
+		QPen cloud_pen(cloud_color);
 		cloud_pen.setWidth(2);
 		cloud_pen.setCosmetic(true); // Keep size constant despite zoom
+		
 		painter.setPen(cloud_pen);
 
 		// Efficiently draw all points in one call

@@ -76,6 +76,8 @@ signals:
 
 signals:
 	void workspaceGenerationRequested(int samples);
+signals:
+	void showWorkspaceChanged(bool visible);
 
 private:
 	// The main vertical layout that holds all the joint group boxes.
@@ -88,6 +90,7 @@ private:
 	QCheckBox* elbow_down_checkbox_;
 	QSpinBox* samples_spin_box_;
 	QPushButton* generate_workspace_button_;
+	QCheckBox* show_workspace_checkbox_;
 	/**
 	 * @brief Initializes and lays out child widgets and connections.
 	 */

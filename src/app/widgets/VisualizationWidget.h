@@ -3,6 +3,8 @@
 #include <QFrame>
 #include <vector>
 #include <Eigen/Dense>
+#include <QPointF>
+#include <QPixmap>
 
 class QPaintEvent;
 class QMouseEvent;
@@ -38,6 +40,10 @@ public:
      */
     void updateRobotPoses(const std::vector<Eigen::Matrix4d>& poses);
 
+    void setWorkspacePoints(const std::vector<QPointF>& points);
+
+    void setShowWorkspace(bool show);
+
 signals:
     /**
      * @brief Emitted when the user updates the IK target position via interaction.
@@ -66,6 +72,8 @@ protected:
      */
     void mouseReleaseEvent(QMouseEvent* event) override;
 
+    void resizeEvent(QResizeEvent* event) override;
+
 private:
     /**
      * @brief Converts a pixel coordinate to world space using current zoom.
@@ -78,4 +86,8 @@ private:
     // Flag to track if the user is currently dragging the target.
     bool is_dragging_;
     double zoom_factor_; // Represents pixels per meter
+    std::vector<QPointF> workspace_points_;
+    bool show_workspace_ = true;
+    QPixmap workspace_cache_;
+    void redrawWorkspaceCache();
 };

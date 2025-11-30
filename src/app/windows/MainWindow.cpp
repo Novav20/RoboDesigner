@@ -11,6 +11,7 @@
 #include <QStatusBar>
 
 #include <RoboDesignerCore/primitives/SerialRobot.h>
+#include <RoboDesignerCore/kinematics/MonteCarloWorkspaceGenerator.h>
 
 // --- Constructor ---
 MainWindow::MainWindow(QWidget* parent)
@@ -55,11 +56,16 @@ MainWindow::MainWindow(QWidget* parent)
 	connect(stop_button, &QPushButton::clicked, animation_timer_, &QTimer::stop);
 	connect(control_panel_, &RobotControlPanel::solveIKRequested, this, &MainWindow::onSolveIKRequested);
 	connect(visualization_widget_, &VisualizationWidget::targetPositionChanged, this, &MainWindow::onIKTargetChanged);
+	connect(control_panel_, &RobotControlPanel::workspaceGenerationRequested, this, &MainWindow::onWorkspaceGenerationRequested);
+	connect(control_panel_, &RobotControlPanel::showWorkspaceChanged, visualization_widget_, &VisualizationWidget::setShowWorkspace);
+	connect(&workspace_watcher_, &QFutureWatcher<std::vector<QPointF>>::finished, this, &MainWindow::onWorkspaceCalculationFinished);
 }
 
 // --- Load Robot ---
 void MainWindow::loadRobot(SerialRobot* robot)
 {
+	visualization_widget_->setWorkspacePoints({});
+	control_panel_->setMaxReach(0.0);
 	robot_ = robot;
 
 	if (robot_) {
@@ -101,6 +107,20 @@ void MainWindow::onSolveIKRequested(double x, double y, bool use_elbow_down)
 	}
 }
 
+void MainWindow::onWorkspaceCalculationFinished()
+{
+	// Get the pair
+	const auto result_pair = workspace_watcher_.result();
+
+	// Update Visualization
+	visualization_widget_->setWorkspacePoints(result_pair.first);
+
+	// Update Control Panel
+	control_panel_->setMaxReach(result_pair.second);
+
+	statusBar()->showMessage("Workspace generation complete.", 3000);
+}
+
 void MainWindow::onIKTargetChanged(double x, double y)
 {
 	if (!robot_) return;
@@ -117,6 +137,36 @@ void MainWindow::onIKTargetChanged(double x, double y)
 	else {
 		statusBar()->showMessage("IK Solution not found: Target is unreachable.", 5000);
 	}
+}
+
+void MainWindow::onWorkspaceGenerationRequested(int samples)
+{
+	if (!robot_) return;
+	//TODO: Disable button while calculating
+	statusBar()->showMessage("Calculating workspace...");
+
+	// 1. Clone the solver. This creates a totally independent copy.
+	auto solver_copy = robot_->getForwardKinematicsSolver()->clone();
+
+	// Define the task to run in the background
+	auto task = [solver = std::move(solver_copy), samples]() -> std::pair<std::vector<QPointF>, double> {
+		// 1. Create generator (thread-local)
+		MonteCarloWorkspaceGenerator generator(*solver);
+
+		// 2. Heavy calculation
+		const auto core_result = generator.generate(samples);
+
+		// 3. Data conversion (also heavy, so do it here)
+		std::vector<QPointF> qt_points;
+		qt_points.reserve(core_result.points.size());
+		for (const auto& p : core_result.points) {
+			qt_points.emplace_back(p.x(), p.y());
+		}
+		return { qt_points, core_result.max_reach };
+		};
+
+	// Launch the task and monitor it with the watcher
+	workspace_watcher_.setFuture(QtConcurrent::run(std::move(task)));
 }
 
 // --- Visualization Update ---

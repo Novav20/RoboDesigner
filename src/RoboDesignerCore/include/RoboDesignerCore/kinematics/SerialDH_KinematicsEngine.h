@@ -34,6 +34,8 @@ public:
 	*/
 	size_t getNumJoints() const override;
 
+	std::unique_ptr<IForwardKinematicsSolver> clone() const override;
+
 private:
 	// A private copy of the robot's kinematic chain (its structure).
 	std::vector<Link> links_;

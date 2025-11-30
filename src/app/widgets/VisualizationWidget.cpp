@@ -20,6 +20,19 @@ void VisualizationWidget::updateRobotPoses(const std::vector<Eigen::Matrix4d>& p
 	update(); // Schedule a repaint
 }
 
+void VisualizationWidget::setWorkspacePoints(const std::vector<QPointF>& points)
+{
+	workspace_points_ = points;
+	redrawWorkspaceCache();
+	update();
+}
+
+void VisualizationWidget::setShowWorkspace(bool show)
+{
+	show_workspace_ = show;
+	update();
+}
+
 void VisualizationWidget::paintEvent(QPaintEvent* event)
 {
 	// Call base class first
@@ -27,6 +40,11 @@ void VisualizationWidget::paintEvent(QPaintEvent* event)
 
 	// Create the painter
 	QPainter painter(this);
+
+	if (show_workspace_ && !workspace_cache_.isNull()) {
+		// Draw the cached image at (0,0). Fast!
+		painter.drawPixmap(0, 0, workspace_cache_);
+	}
 
 	// Translate origin
 	painter.translate(width() / 2.0, height() / 2.0);
@@ -40,7 +58,6 @@ void VisualizationWidget::paintEvent(QPaintEvent* event)
 	QPen link_pen(Qt::white);
 	link_pen.setWidth(2);
 	link_pen.setCosmetic(true);
-
 
 	QBrush joint_brush(Qt::cyan);
 
@@ -118,6 +135,11 @@ void VisualizationWidget::mouseReleaseEvent(QMouseEvent* event)
 	}
 }
 
+void VisualizationWidget::resizeEvent(QResizeEvent* event)
+{
+	QFrame::resizeEvent(event); // Base class first
+	redrawWorkspaceCache(); // Size changed, must redraw cache
+}
 
 QPointF VisualizationWidget::pixelToWorld(const QPointF& pixel_pos) const
 {
@@ -131,3 +153,29 @@ QPointF VisualizationWidget::pixelToWorld(const QPointF& pixel_pos) const
 
 	return { world_x, world_y };
 }
+
+void VisualizationWidget::redrawWorkspaceCache()
+{
+	if (width() <= 0 || height() <= 0) return;
+
+	// 1. Create a pixmap the size of the widget
+	workspace_cache_ = QPixmap(size());
+	workspace_cache_.fill(Qt::transparent); // Clear it
+
+	if (workspace_points_.empty()) return;
+
+	// 2. Create a painter that draws ON THE PIXMAP, not the widget
+	QPainter painter(&workspace_cache_);
+
+	// 3. Set up coordinate transform (SAME AS paintEvent)
+	painter.translate(width() / 2.0, height() / 2.0);
+	painter.scale(zoom_factor_, -zoom_factor_);
+
+	// 4. Draw points
+	QPen cloud_pen(QColor(0, 100, 0, 20));
+	cloud_pen.setWidth(2);
+	cloud_pen.setCosmetic(true);
+	painter.setPen(cloud_pen);
+	painter.drawPoints(workspace_points_.data(), static_cast<int>(workspace_points_.size()));
+}
+

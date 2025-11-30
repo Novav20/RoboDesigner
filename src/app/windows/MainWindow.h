@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QtConcurrent>
+#include <QFutureWatcher>
 #include <vector>
 #include <RoboDesignerCore/primitives/DHParameterIndex.h>
 
@@ -37,6 +39,7 @@ public:
      */
     void loadRobot(SerialRobot* robot);
 
+
 private slots:
     /**
      * @brief Slot that receives notifications when a robot parameter is changed in the UI.
@@ -64,9 +67,21 @@ private slots:
     void onSolveIKRequested(double x, double y, bool use_elbow_down);
 
     /**
+     * @brief Called when the background workspace calculation thread completes.
+     * This slot runs on the main thread to update the UI with the results.
+     */
+    void onWorkspaceCalculationFinished();
+
+    /**
      * @brief Handles updates to the IK target from the visualization widget.
      */
     void onIKTargetChanged(double x, double y);
+
+    /**
+     * @brief Initiates the background workspace generation process.
+     * @param samples The number of samples requested by the UI.
+     */
+    void onWorkspaceGenerationRequested(int samples);
 
 private:
     // Pointers to the main UI components. These are owned by the widget hierarchy.
@@ -75,12 +90,14 @@ private:
     // A non-owning pointer to the currently active robot model.
     // The lifetime of the robot is managed elsewhere (e.g., in main()).
     SerialRobot* robot_;
-    
-    VisualizationWidget* visualization_widget_; 
+
+    VisualizationWidget* visualization_widget_;
 
     std::vector<double> joint_positions_;
 
     QTimer* animation_timer_;
+
+    QFutureWatcher<std::pair<std::vector<QPointF>, double>> workspace_watcher_;
 
     /**
      * @brief Updates the visualization widget with the latest robot state.

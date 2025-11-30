@@ -2,6 +2,7 @@
 
 #include <Eigen/Dense>
 #include <vector>
+#include <memory>
 
 /**
  * @class IForwardKinematicsSolver
@@ -49,4 +50,6 @@ public:
 	*         relative to the base frame. Returns an empty vector on error.
 	*/
 	virtual std::vector<Eigen::Matrix4d> calculateAllLinkPoses(const std::vector<double>& joint_positions) const = 0;
+
+	virtual std::unique_ptr<IForwardKinematicsSolver> clone() const = 0;
 };

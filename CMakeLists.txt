@@ -15,7 +15,7 @@ set(CMAKE_PREFIX_PATH "C:/Qt/6.9.1/msvc2022_64" CACHE PATH "Path to Qt installat
 
 # Find the Qt6 package and its required Widgets component.
 # REQUIRED means CMake will fail with an error if Qt is not found.
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Concurrent)
 
 # --- Dependency Management ---
 include(FetchContent)
@@ -71,7 +71,9 @@ add_executable(RoboDesignerTests
 	"tests/core/link_test.cpp" 
 	"tests/core/primitives/serial_robot_test.cpp" 
 	"tests/core/kinematics/serial_dh_kinematics_engine_test.cpp"
- "tests/core/kinematics/two_link_planar_ik_solver_test.cpp" "tests/core/kinematics/jacobian_solver_test.cpp" "tests/core/kinematics/numerical_ik_solver_test.cpp")
+ "tests/core/kinematics/two_link_planar_ik_solver_test.cpp" "tests/core/kinematics/jacobian_solver_test.cpp" 
+ "tests/core/kinematics/numerical_ik_solver_test.cpp" 
+ "tests/core/kinematics/workspace_generator_test.cpp")
 target_link_libraries(RoboDesignerTests PRIVATE RoboDesignerCore gtest_main glm::glm)
 
 include(GoogleTest)

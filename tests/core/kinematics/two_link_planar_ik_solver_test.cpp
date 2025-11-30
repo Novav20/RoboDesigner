@@ -3,7 +3,6 @@
 #include <RoboDesignerCore/primitives/Link.h>
 #include <Eigen/Dense>
 #include <vector>
-#include <numbers>
 #include <RoboDesignerCore/kinematics/SerialDH_KinematicsEngine.h>
 
 namespace RoboDesigner::CoreTests {

@@ -66,6 +66,10 @@ private slots:
      */
     void onSolveIKRequested(double x, double y, bool use_elbow_down);
 
+    /**
+     * @brief Called when the background workspace calculation thread completes.
+     * This slot runs on the main thread to update the UI with the results.
+     */
     void onWorkspaceCalculationFinished();
 
     /**
@@ -73,6 +77,10 @@ private slots:
      */
     void onIKTargetChanged(double x, double y);
 
+    /**
+     * @brief Initiates the background workspace generation process.
+     * @param samples The number of samples requested by the UI.
+     */
     void onWorkspaceGenerationRequested(int samples);
 
 private:
@@ -82,8 +90,8 @@ private:
     // A non-owning pointer to the currently active robot model.
     // The lifetime of the robot is managed elsewhere (e.g., in main()).
     SerialRobot* robot_;
-    
-    VisualizationWidget* visualization_widget_; 
+
+    VisualizationWidget* visualization_widget_;
 
     std::vector<double> joint_positions_;
 

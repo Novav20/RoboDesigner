@@ -30,3 +30,9 @@ size_t SerialDH_KinematicsEngine::getNumJoints() const
 {
 	return links_.size();
 }
+
+std::unique_ptr<IForwardKinematicsSolver> SerialDH_KinematicsEngine::clone() const
+{
+	// Create a new instance with a copy of our links
+	return std::make_unique<SerialDH_KinematicsEngine>(links_);
+}

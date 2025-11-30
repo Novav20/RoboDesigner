@@ -64,6 +64,8 @@ MainWindow::MainWindow(QWidget* parent)
 // --- Load Robot ---
 void MainWindow::loadRobot(SerialRobot* robot)
 {
+	visualization_widget_->setWorkspacePoints({});
+	control_panel_->setMaxReach(0.0);
 	robot_ = robot;
 
 	if (robot_) {
@@ -143,14 +145,13 @@ void MainWindow::onWorkspaceGenerationRequested(int samples)
 	//TODO: Disable button while calculating
 	statusBar()->showMessage("Calculating workspace...");
 
-	// We need a pointer to the solver to pass to the background thread.
-	// IMPORTANT: We assume 'robot_' stays alive while the thread runs.
-	const auto* fk_solver = robot_->getForwardKinematicsSolver();
+	// 1. Clone the solver. This creates a totally independent copy.
+	auto solver_copy = robot_->getForwardKinematicsSolver()->clone();
 
 	// Define the task to run in the background
-	auto task = [fk_solver, samples]() -> std::pair<std::vector<QPointF>, double> {
+	auto task = [solver = std::move(solver_copy), samples]() -> std::pair<std::vector<QPointF>, double> {
 		// 1. Create generator (thread-local)
-		MonteCarloWorkspaceGenerator generator(*fk_solver);
+		MonteCarloWorkspaceGenerator generator(*solver);
 
 		// 2. Heavy calculation
 		const auto core_result = generator.generate(samples);
@@ -165,7 +166,7 @@ void MainWindow::onWorkspaceGenerationRequested(int samples)
 		};
 
 	// Launch the task and monitor it with the watcher
-	workspace_watcher_.setFuture(QtConcurrent::run(task));
+	workspace_watcher_.setFuture(QtConcurrent::run(std::move(task)));
 }
 
 // --- Visualization Update ---

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QtConcurrent>
+#include <QFutureWatcher>
 #include <vector>
 #include <RoboDesignerCore/primitives/DHParameterIndex.h>
 
@@ -64,6 +66,8 @@ private slots:
      */
     void onSolveIKRequested(double x, double y, bool use_elbow_down);
 
+    void onWorkspaceCalculationFinished();
+
     /**
      * @brief Handles updates to the IK target from the visualization widget.
      */
@@ -84,6 +88,8 @@ private:
     std::vector<double> joint_positions_;
 
     QTimer* animation_timer_;
+
+    QFutureWatcher<std::vector<QPointF>> workspace_watcher_;
 
     /**
      * @brief Updates the visualization widget with the latest robot state.

@@ -58,6 +58,7 @@ MainWindow::MainWindow(QWidget* parent)
 	connect(visualization_widget_, &VisualizationWidget::targetPositionChanged, this, &MainWindow::onIKTargetChanged);
 	connect(control_panel_, &RobotControlPanel::workspaceGenerationRequested, this, &MainWindow::onWorkspaceGenerationRequested);
 	connect(control_panel_, &RobotControlPanel::showWorkspaceChanged, visualization_widget_, &VisualizationWidget::setShowWorkspace);
+	connect(&workspace_watcher_, &QFutureWatcher<std::vector<QPointF>>::finished, this, &MainWindow::onWorkspaceCalculationFinished);
 }
 
 // --- Load Robot ---
@@ -104,6 +105,17 @@ void MainWindow::onSolveIKRequested(double x, double y, bool use_elbow_down)
 	}
 }
 
+void MainWindow::onWorkspaceCalculationFinished()
+{
+	// Get the result from the thread
+	const std::vector<QPointF> points = workspace_watcher_.result();
+
+	// Update the view
+	visualization_widget_->setWorkspacePoints(points);
+
+	statusBar()->showMessage("Workspace generation complete.", 3000);
+}
+
 void MainWindow::onIKTargetChanged(double x, double y)
 {
 	if (!robot_) return;
@@ -125,22 +137,32 @@ void MainWindow::onIKTargetChanged(double x, double y)
 void MainWindow::onWorkspaceGenerationRequested(int samples)
 {
 	if (!robot_) return;
+	//TODO: Disable button while calculating
+	statusBar()->showMessage("Calculating workspace...");
 
-	// 1. Create the generator, injecting the robot's FK solver
-	MonteCarloWorkspaceGenerator generator(*robot_->getForwardKinematicsSolver());
+	// We need a pointer to the solver to pass to the background thread.
+	// IMPORTANT: We assume 'robot_' stays alive while the thread runs.
+	const auto* fk_solver = robot_->getForwardKinematicsSolver();
 
-	// TODO: 2. Run the simulation (This blocks the UI for now)
-	const std::vector<Eigen::Vector2d> eigen_points = generator.generate(samples);
+	// Define the task to run in the background
+	auto task = [fk_solver, samples]() -> std::vector<QPointF> {
+		// 1. Create generator (thread-local)
+		MonteCarloWorkspaceGenerator generator(*fk_solver);
 
-	// 3. Convert Eigen types to Qt types for the view
-	std::vector<QPointF> qt_points;
-	qt_points.reserve(eigen_points.size());
-	for (const auto& p : eigen_points) {
-		qt_points.emplace_back(p.x(), p.y());
-	}
+		// 2. Heavy calculation
+		const auto eigen_points = generator.generate(samples);
 
-	// 4. Update the view
-	visualization_widget_->setWorkspacePoints(qt_points);
+		// 3. Data conversion (also heavy, so do it here)
+		std::vector<QPointF> qt_points;
+		qt_points.reserve(eigen_points.size());
+		for (const auto& p : eigen_points) {
+			qt_points.emplace_back(p.x(), p.y());
+		}
+		return qt_points;
+		};
+
+	// Launch the task and monitor it with the watcher
+	workspace_watcher_.setFuture(QtConcurrent::run(task));
 }
 
 // --- Visualization Update ---

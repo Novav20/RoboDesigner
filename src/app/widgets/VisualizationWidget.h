@@ -4,6 +4,7 @@
 #include <vector>
 #include <Eigen/Dense>
 #include <QPointF>
+#include <QPixmap>
 
 class QPaintEvent;
 class QMouseEvent;
@@ -71,6 +72,8 @@ protected:
      */
     void mouseReleaseEvent(QMouseEvent* event) override;
 
+    void resizeEvent(QResizeEvent* event) override;
+
 private:
     /**
      * @brief Converts a pixel coordinate to world space using current zoom.
@@ -85,4 +88,6 @@ private:
     double zoom_factor_; // Represents pixels per meter
     std::vector<QPointF> workspace_points_;
     bool show_workspace_ = true;
+    QPixmap workspace_cache_;
+    void redrawWorkspaceCache();
 };

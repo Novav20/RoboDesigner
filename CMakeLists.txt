@@ -9,47 +9,22 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-# The CMAKE_PREFIX_PATH tells CMake where to look for installed packages like Qt.
-# IMPORTANT: Use forward slashes, even on Windows.
-set(CMAKE_PREFIX_PATH "C:/Qt/6.9.1/msvc2022_64" CACHE PATH "Path to Qt installation")
+# --- Dependencies (System Level) ---
 
-# Find the Qt6 package and its required Widgets component.
-# REQUIRED means CMake will fail with an error if Qt is not found.
+# 1. Qt 6
 find_package(Qt6 REQUIRED COMPONENTS Widgets Concurrent)
 
-# --- Dependency Management ---
-include(FetchContent)
-
-# Persist FetchContent downloads across build directory wipes
-set(FETCHCONTENT_BASE_DIR "${CMAKE_SOURCE_DIR}/.cache/fetchcontent" CACHE PATH "Base dir for FetchContent" FORCE)
-message(STATUS "FETCHCONTENT_BASE_DIR=${FETCHCONTENT_BASE_DIR}")
-file(MAKE_DIRECTORY "${FETCHCONTENT_BASE_DIR}")
-
-# --- Eigen (Header-Only Special Case) ---
-FetchContent_Declare(
-    eigen
-    GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-    GIT_TAG        3.4.0
-)
-FetchContent_Populate(eigen)
-# Create our own simple INTERFACE target. We CANNOT use a "::" in the name.
+# 2. Eigen 3
+find_package(Eigen3 3.4 REQUIRED)
+# Create an alias so our existing code (which links to 'eigen_interface') still works.
 add_library(eigen_interface INTERFACE)
-target_include_directories(eigen_interface INTERFACE ${eigen_SOURCE_DIR})
+target_link_libraries(eigen_interface INTERFACE Eigen3::Eigen)
 
-# --- GLM & GoogleTest (Well-Behaved Dependencies) ---
-FetchContent_Declare(
-    glm
-    GIT_REPOSITORY https://github.com/g-truc/glm.git
-    GIT_TAG        0.9.9.8
-)
-FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG        v1.14.0
-)
-set(INSTALL_GTEST OFF)
-set(FETCHCONTENT_ADD_SUBDIRECTORY_EXCLUDE_FROM_ALL TRUE)
-FetchContent_MakeAvailable(glm googletest)
+# 3. GLM
+find_package(glm REQUIRED)
+
+# 4. GoogleTest
+find_package(GTest REQUIRED)
 
 # --- C++ Standard Setup ---
 set(CMAKE_CXX_STANDARD 20)
@@ -74,7 +49,7 @@ add_executable(RoboDesignerTests
  "tests/core/kinematics/two_link_planar_ik_solver_test.cpp" "tests/core/kinematics/jacobian_solver_test.cpp" 
  "tests/core/kinematics/numerical_ik_solver_test.cpp" 
  "tests/core/kinematics/workspace_generator_test.cpp")
-target_link_libraries(RoboDesignerTests PRIVATE RoboDesignerCore gtest_main glm::glm)
+target_link_libraries(RoboDesignerTests PRIVATE RoboDesignerCore GTest::gtest_main glm::glm)
 
 include(GoogleTest)
 gtest_discover_tests(RoboDesignerTests)

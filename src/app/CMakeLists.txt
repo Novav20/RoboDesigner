@@ -13,9 +13,3 @@ target_link_libraries(RoboDesignerApp PRIVATE
   Qt6::Widgets
   Qt6::Concurrent
 )
-
-# --- Runtime Deployment (Qt 6) ---
-if(WIN32)
-  # Let Qt add the appropriate deployment step for Windows (uses windeployqt internally).
-  qt_finalize_executable(RoboDesignerApp)
-endif()

@@ -1,0 +1,18 @@
+CompileFlags:
+  Add: 
+    - "-I${workspaceFolder}/src/RoboDesignerCore/include"
+    - "-std=c++20"
+  Remove:
+    - "-stdlib=libc++"
+
+InlayHints:
+  Enabled: true
+
+Index:
+  Background: Build
+
+Diagnostics:
+  ClangTidy:
+    Add: 
+      - "readability-*"
+      - "performance-*"

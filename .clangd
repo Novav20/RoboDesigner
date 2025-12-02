@@ -1,9 +1,19 @@
 CompileFlags:
   Add: 
     - "-I${workspaceFolder}/src/RoboDesignerCore/include"
+    - "-I/usr/include/qt6/QtWidgets"
+    - "-I/usr/include/qt6"
+    - "-I/usr/include/qt6/QtGui"
+    - "-I/usr/include/qt6/QtCore"
+    - "-I$ENV{CONDA_PREFIX}/include"
+    - "-I/usr/include/eigen3"
+    - "-I/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include"
     - "-std=c++20"
+    - "-fPIC"
   Remove:
     - "-stdlib=libc++"
+    - "-mno-direct-extern-access"
+    - "-fno-semantic-interposition"
 
 InlayHints:
   Enabled: true
@@ -12,6 +22,13 @@ Index:
   Background: Build
 
 Diagnostics:
+  # Suppress GCC-specific warnings that don't apply to Clang/Clangd
+  Suppress:
+    - builtin_definition                    # GCC intrinsics headers
+    - attribute_wrong_number_arguments      # GCC attribute syntax differences
+    - gnu_imaginary_constant                # GCC extension for complex numbers
+    - gnu_zero_variadic_macro_arguments     # GCC allows zero args in variadic macros
+    - gcc_compat                            # General GCC compatibility issues
   ClangTidy:
     Add: 
       - "readability-*"

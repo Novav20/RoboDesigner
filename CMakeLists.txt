@@ -2,6 +2,23 @@ cmake_minimum_required(VERSION 3.20)
 project(RoboDesigner VERSION 1.0 LANGUAGES CXX)
 enable_testing()
 
+# --- Conda Environment Setup ---
+# Tell CMake to search for packages in the Conda environment FIRST
+# This must be done before any find_package() calls
+if(DEFINED ENV{CONDA_PREFIX})
+	list(APPEND CMAKE_PREFIX_PATH $ENV{CONDA_PREFIX})
+	list(APPEND CMAKE_PREFIX_PATH $ENV{CONDA_PREFIX}/lib/cmake)
+	# Add conda lib directory to linker search path
+	link_directories($ENV{CONDA_PREFIX}/lib)
+endif()
+
+# --- Runtime Search Path Configuration ---
+# Use RPATH to embed library search paths in executables
+# This allows executables to find conda libraries at runtime
+set(CMAKE_BUILD_RPATH "$ENV{CONDA_PREFIX}/lib")
+set(CMAKE_INSTALL_RPATH "$ENV{CONDA_PREFIX}/lib")
+set(CMAKE_BUILD_RPATH_USE_ORIGIN ON)
+
 # --- Qt Configuration ---
 # Set this to ON to automatically run the MOC, UIC, and RCC compilers.
 # This is essential for building Qt applications with CMake.
@@ -25,6 +42,9 @@ find_package(glm REQUIRED)
 
 # 4. GoogleTest
 find_package(GTest REQUIRED)
+
+# 5. Pinocchio
+find_package(pinocchio REQUIRED)
 
 # --- C++ Standard Setup ---
 set(CMAKE_CXX_STANDARD 20)

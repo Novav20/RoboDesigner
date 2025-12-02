@@ -2,8 +2,14 @@
 #include "windows/MainWindow.h"
 #include <RoboDesignerCore/primitives/SerialRobot.h>
 #include <memory>
+#include <iostream>
+#include <pinocchio/config.hpp>
 
 int main(int argc, char* argv[]) {
+
+	std::cout << "Pinocchio Version: " << PINOCCHIO_VERSION << '\n';
+
+	// Initialize Qt
 	QApplication app(argc, argv);
 
 	// Create the main window. It will start empty.

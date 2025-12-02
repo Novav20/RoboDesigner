@@ -27,4 +27,5 @@ target_include_directories(RoboDesignerCore PUBLIC
 # will have Eigen's include directories added automatically.
 target_link_libraries(RoboDesignerCore PUBLIC
 	eigen_interface
+	pinocchio::pinocchio
 )

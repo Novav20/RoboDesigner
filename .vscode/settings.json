@@ -1,6 +1,6 @@
 {
     "clangd.arguments": [
-        "--compile-commands-dir=${workspaceFolder}/build",
+        "--compile-commands-dir=${workspaceFolder}/out/build/GCC-Compiler-Preset",
         "--header-insertion=iwyu",
         "--header-insertion-decorators",
         "-j=4"
@@ -9,6 +9,11 @@
         "-std=c++20",
         "-I${workspaceFolder}/src/RoboDesignerCore/include",
         "-I${workspaceFolder}/src",
-        "-isystem/usr/include/eigen3"
+        "-I$ENV{CONDA_PREFIX}/include",
+        "-isystem/usr/include/eigen3",
+        "-isystem/usr/include/qt6/QtWidgets",
+        "-isystem/usr/include/qt6/QtCore",
+        "-isystem/usr/include/qt6/QtGui",
+        "-isystem/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include"
     ]
 }

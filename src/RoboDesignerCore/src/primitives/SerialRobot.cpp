@@ -3,7 +3,6 @@
 #include <RoboDesignerCore/kinematics/TwoLinkPlanarIKSolver.h>
 #include <RoboDesignerCore/kinematics/JacobianTransposeIKSolver.h>
 #include <RoboDesignerCore/kinematics/JacobianSolver.h>
-#include <iostream>
 
 SerialRobot::SerialRobot(const std::string& name, std::unique_ptr<IForwardKinematicsSolver> fk_solver, std::unique_ptr<IInverseKinematicsSolver> ik_solver)
 	: name_(name), fk_solver_(std::move(fk_solver)), ik_solver_(std::move(ik_solver))
@@ -35,11 +34,18 @@ std::unique_ptr<SerialRobot> SerialRobot::createTwoLinkPlanar() {
 	const double link_length_1 = 1.0;
 	const double link_length_2 = 0.8;
 
-	const std::vector<Link> robot_links = {
+	std::vector<Link> robot_links = {
 		Link({.theta_ = 0, .d_ = 0, .a_ = link_length_1, .alpha_ = 0}),
 		Link({.theta_ = 0, .d_ = 0, .a_ = link_length_2, .alpha_ = 0})
 	};
 
+	// --- New Section: Configure Dynamic Properties ---
+    robot_links[0].setMass(1.0);
+    robot_links[0].setCenterOfMass({link_length_1 / 2.0, 0.0, 0.0});
+
+    robot_links[1].setMass(0.8);
+    robot_links[1].setCenterOfMass({link_length_2 / 2.0, 0.0, 0.0});
+	
 	// 1. Create the FK solver for the Robot
 	auto fk_solver_for_robot = std::make_unique<SerialDH_KinematicsEngine>(robot_links);
 

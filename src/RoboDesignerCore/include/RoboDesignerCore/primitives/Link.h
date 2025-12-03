@@ -28,6 +28,28 @@ public:
      * @return A 4x4 transformation matrix.
      */
     Eigen::Matrix4d getTransformationMatrix(double joint_value) const;
+
+
+    /**
+    * @brief Sets the mass of the link.
+    * @param mass The mass of the link in kilograms.
+    */
+    void setMass(double mass);
+
+    /**
+    * @brief Sets the center of mass of the link.
+    * @param center_of_mass The center of mass of the link in meters.
+    */
+    void setCenterOfMass(const Eigen::Vector3d& center_of_mass);
+
+    /**
+    * @brief Sets the inertia tensor of the link.
+    * @param inertia_tensor The inertia tensor of the link in kg*m^2.
+    */
+    void setInertiaTensor(const Eigen::Matrix3d& inertia);
 private:
 	DHParameters dh_params_;
+    double mass_{1.0}; // kg
+    Eigen::Vector3d center_of_mass_{0.0, 0.0, 0.0}; // default CoM at the origin
+    Eigen::Matrix3d inertia_{Eigen::Matrix3d::Identity()}; // default inertia tensor
 };

@@ -25,3 +25,15 @@ Eigen::Matrix4d Link::getTransformationMatrix(double joint_value) const
 	const Eigen::Matrix4d result = (rot_z * trans_z * trans_x * rot_x).matrix();
 	return result;
 }
+
+void Link::setMass(double mass) {
+	mass_ = mass;
+}
+
+void Link::setCenterOfMass(const Eigen::Vector3d& center_of_mass) {
+	center_of_mass_ = center_of_mass;
+}
+
+void Link::setInertiaTensor(const Eigen::Matrix3d& inertia) {
+	inertia_ = inertia;
+}

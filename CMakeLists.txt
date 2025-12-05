@@ -68,7 +68,9 @@ add_executable(RoboDesignerTests
 	"tests/core/kinematics/serial_dh_kinematics_engine_test.cpp"
  "tests/core/kinematics/two_link_planar_ik_solver_test.cpp" "tests/core/kinematics/jacobian_solver_test.cpp" 
  "tests/core/kinematics/numerical_ik_solver_test.cpp" 
- "tests/core/kinematics/workspace_generator_test.cpp")
+ "tests/core/kinematics/workspace_generator_test.cpp"
+	"tests/core/dynamics/pinocchio_engine_test.cpp"
+ )
 target_link_libraries(RoboDesignerTests PRIVATE RoboDesignerCore GTest::gtest_main glm::glm)
 
 include(GoogleTest)

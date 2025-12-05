@@ -1,5 +1,5 @@
 CompileFlags:
-  Add: 
+  Add:
     - "-I${workspaceFolder}/src/RoboDesignerCore/include"
     - "-I/usr/include/qt6/QtWidgets"
     - "-I/usr/include/qt6"
@@ -22,14 +22,13 @@ Index:
   Background: Build
 
 Diagnostics:
-  # Suppress GCC-specific warnings that don't apply to Clang/Clangd
   Suppress:
-    - builtin_definition                    # GCC intrinsics headers
-    - attribute_wrong_number_arguments      # GCC attribute syntax differences
-    - gnu_imaginary_constant                # GCC extension for complex numbers
-    - gnu_zero_variadic_macro_arguments     # GCC allows zero args in variadic macros
-    - gcc_compat                            # General GCC compatibility issues
+    - builtin_definition
+    - attribute_wrong_number_arguments
+    - gnu_imaginary_constant
+    - gnu_zero_variadic_macro_arguments
+    - gcc_compat
   ClangTidy:
-    Add: 
+    Add:
       - "readability-*"
       - "performance-*"

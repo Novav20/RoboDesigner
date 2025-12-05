@@ -47,6 +47,12 @@ public:
     * @param inertia_tensor The inertia tensor of the link in kg*m^2.
     */
     void setInertiaTensor(const Eigen::Matrix3d& inertia);
+
+    // --- Getters ---
+    double getMass() const { return mass_; }
+    const Eigen::Vector3d& getCenterOfMass() const { return center_of_mass_; }
+    const Eigen::Matrix3d& getInertiaTensor() const { return inertia_; }
+    const DHParameters& getDHParameters() const { return dh_params_; }
 private:
 	DHParameters dh_params_;
     double mass_{1.0}; // kg

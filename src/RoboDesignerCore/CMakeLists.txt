@@ -13,6 +13,8 @@ add_library(RoboDesignerCore STATIC
 	"include/RoboDesignerCore/kinematics/JacobianSolver.h" "src/kinematics/JacobianSolver.cpp" 
 	"include/RoboDesignerCore/kinematics/JacobianTransposeIKSolver.h" "src/kinematics/JacobianTransposeIKSolver.cpp"
 	"include/RoboDesignerCore/kinematics/MonteCarloWorkspaceGenerator.h" "src/kinematics/MonteCarloWorkspaceGenerator.cpp"
+	"include/RoboDesignerCore/dynamics/IDynamicsEngine.h" 
+	"include/RoboDesignerCore/dynamics/PinocchioDynamicsEngine.h" "src/dynamics/PinocchioDynamicsEngine.cpp"
 
 )
 

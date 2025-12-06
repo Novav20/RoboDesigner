@@ -1,181 +1,231 @@
 #include "VisualizationWidget.h"
-#include <QPainter>
-#include <QPaintEvent>
-#include <QMouseEvent>
 #include <QDebug>
+#include <QMouseEvent>
+#include <QPaintEvent>
+#include <QPainter>
+#include <qnamespace.h>
 
-VisualizationWidget::VisualizationWidget(QWidget* parent)
-	:QFrame(parent),
-	ik_target_(1.0, 0.5),
-	is_dragging_(false),
-	zoom_factor_(100.0)
-{
-	setFrameStyle(QFrame::Panel | QFrame::Sunken);
-	setMinimumSize(400, 300);
+VisualizationWidget::VisualizationWidget(QWidget *parent)
+    : QFrame(parent), ik_target_(1.0, 0.5), is_dragging_(false),
+      zoom_factor_(100.0) {
+  setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  setMinimumSize(400, 300);
 }
 
-void VisualizationWidget::updateRobotPoses(const std::vector<Eigen::Matrix4d>& poses)
-{
-	robot_poses_ = poses;
-	update(); // Schedule a repaint
+void VisualizationWidget::updateRobotPoses(
+    const std::vector<Eigen::Matrix4d> &poses) {
+  robot_poses_ = poses;
+  update(); // Schedule a repaint
 }
 
-void VisualizationWidget::setWorkspacePoints(const std::vector<QPointF>& points)
-{
-	workspace_points_ = points;
-	redrawWorkspaceCache();
-	update();
+void VisualizationWidget::setWorkspacePoints(
+    const std::vector<QPointF> &points) {
+  workspace_points_ = points;
+  redrawWorkspaceCache();
+  update();
 }
 
-void VisualizationWidget::setShowWorkspace(bool show)
-{
-	show_workspace_ = show;
-	update();
+void VisualizationWidget::setShowWorkspace(bool show) {
+  show_workspace_ = show;
+  update();
 }
 
-void VisualizationWidget::paintEvent(QPaintEvent* event)
-{
-	// Call base class first
-	QFrame::paintEvent(event);
-
-	// Create the painter
-	QPainter painter(this);
-
-	if (show_workspace_ && !workspace_cache_.isNull()) {
-		// Draw the cached image at (0,0). Fast!
-		painter.drawPixmap(0, 0, workspace_cache_);
-	}
-
-	// Translate origin
-	painter.translate(width() / 2.0, height() / 2.0);
-
-	// Scale and flip Y-axis
-	painter.scale(zoom_factor_, -zoom_factor_);
-
-	QPointF previous_point(0.0, 0.0);
-
-	// Pen for the links
-	QPen link_pen(Qt::white);
-	link_pen.setWidth(2);
-	link_pen.setCosmetic(true);
-
-	QBrush joint_brush(Qt::cyan);
-
-	// Base joint
-	painter.setPen(Qt::NoPen); // Tell the painter not to draw an outline
-	painter.setBrush(joint_brush);
-	painter.drawEllipse(previous_point, 0.05, 0.05);
-
-	for (const auto& pose : robot_poses_)
-	{
-		QPointF current_point(pose(0, 3), pose(1, 3)); // extract translation x, y manually
-		painter.setPen(link_pen);
-		painter.drawLine(previous_point, current_point);
-
-		painter.setPen(Qt::NoPen);
-		painter.drawEllipse(current_point, 0.05, 0.05);
-
-		previous_point = current_point;
-	}
-
-
-	// Draw the IK target marker
-	QPen target_pen(Qt::red);
-	target_pen.setWidth(2);
-	target_pen.setCosmetic(true);
-	painter.setPen(target_pen);
-
-	const double crosshair_size = 0.05; // 5 cm in world units
-	QPointF target_point(ik_target_.x(), ik_target_.y());
-	painter.drawLine(target_point - QPointF(crosshair_size, 0), target_point + QPointF(crosshair_size, 0));
-	painter.drawLine(target_point - QPointF(0, crosshair_size), target_point + QPointF(0, crosshair_size));
+void VisualizationWidget::updateCenterOfMass(
+    const std::optional<Eigen::Vector3d> &center_of_mass) {
+  center_of_mass_ = center_of_mass;
 }
 
-void VisualizationWidget::mousePressEvent(QMouseEvent* event)
-{
-	// Mouse position in pixel coordinates
-	const QPointF world_pos = pixelToWorld(event->position());
+void VisualizationWidget::paintEvent(QPaintEvent *event) {
+  // Call base class first
+  QFrame::paintEvent(event);
 
-	const Eigen::Vector2d click_vec(world_pos.x(), world_pos.y());
-	const double distance = (ik_target_ - click_vec).norm();
-	const double grab_radius = 0.1; // 10 cm
+  // Create the painter
+  QPainter painter(this);
 
-	if (event->button() == Qt::LeftButton && distance < grab_radius) {
-		is_dragging_ = true;
-	}
+  if (show_workspace_ && !workspace_cache_.isNull()) {
+    // Draw the cached image at (0,0). Fast!
+    painter.drawPixmap(0, 0, workspace_cache_);
+  }
+
+  // Translate origin
+  painter.translate(width() / 2.0, height() / 2.0);
+
+  // Scale and flip Y-axis
+  painter.scale(zoom_factor_, -zoom_factor_);
+
+  QPointF previous_point(0.0, 0.0);
+
+  // Pen for the links
+  QPen link_pen(Qt::white);
+  link_pen.setWidth(2);
+  link_pen.setCosmetic(true);
+
+  QBrush joint_brush(Qt::cyan);
+
+  // Base joint
+  painter.setPen(Qt::NoPen); // Tell the painter not to draw an outline
+  painter.setBrush(joint_brush);
+  painter.drawEllipse(previous_point, 0.05, 0.05);
+
+  for (const auto &pose : robot_poses_) {
+    QPointF current_point(pose(0, 3),
+                          pose(1, 3)); // extract translation x, y manually
+    painter.setPen(link_pen);
+    painter.drawLine(previous_point, current_point);
+
+    painter.setPen(Qt::NoPen);
+    painter.drawEllipse(current_point, 0.05, 0.05);
+
+    previous_point = current_point;
+  }
+
+  // Draw the IK target marker
+  QPen target_pen(Qt::red);
+  target_pen.setWidth(2);
+  target_pen.setCosmetic(true);
+  painter.setPen(target_pen);
+
+  const double crosshair_size = 0.05; // 5 cm in world units
+  QPointF target_point(ik_target_.x(), ik_target_.y());
+  painter.drawLine(target_point - QPointF(crosshair_size, 0),
+                   target_point + QPointF(crosshair_size, 0));
+  painter.drawLine(target_point - QPointF(0, crosshair_size),
+                   target_point + QPointF(0, crosshair_size));
+
+  if (center_of_mass_.has_value()) {
+    // 1. Save the current state (which is in World/Meter coordinates)
+    painter.save();
+
+    // 2. Reset the transform to Identity (Pixel coordinates, 0,0 is top-left)
+    painter.resetTransform();
+
+    // 3. Now our manual 'worldToPixel' calculation is valid for this painter
+    // state
+    QPointF com_world(center_of_mass_->x(), center_of_mass_->y());
+    QPointF com_pixel = worldToPixel(com_world);
+
+    // 4. Draw the Marker
+    double radius = 10.0;
+    QRectF rect(com_pixel.x() - radius, com_pixel.y() - radius, radius * 2,
+                radius * 2);
+
+    painter.setPen(Qt::NoPen);
+
+    // White circle background
+    painter.setBrush(Qt::white);
+    painter.drawEllipse(rect);
+
+    // Black quadrants
+    painter.setBrush(Qt::black);
+    painter.drawPie(rect, 0 * 16, 90 * 16);
+    painter.drawPie(rect, 180 * 16, 90 * 16);
+
+    // Outline
+    painter.setPen(QPen(Qt::black, 1));
+    painter.setBrush(Qt::NoBrush);
+    painter.drawEllipse(rect);
+
+    // 5. Restore the World/Meter state (in case we draw more stuff later)
+    painter.restore();
+  }
+}
+void VisualizationWidget::mousePressEvent(QMouseEvent *event) {
+  // Mouse position in pixel coordinates
+  const QPointF world_pos = pixelToWorld(event->position());
+
+  const Eigen::Vector2d click_vec(world_pos.x(), world_pos.y());
+  const double distance = (ik_target_ - click_vec).norm();
+  const double grab_radius = 0.1; // 10 cm
+
+  if (event->button() == Qt::LeftButton && distance < grab_radius) {
+    is_dragging_ = true;
+  }
 }
 
-void VisualizationWidget::mouseMoveEvent(QMouseEvent* event)
-{
-	if (!is_dragging_) return;
+void VisualizationWidget::mouseMoveEvent(QMouseEvent *event) {
+  if (!is_dragging_)
+    return;
 
-	const QPointF world_pos = pixelToWorld(event->position());
+  const QPointF world_pos = pixelToWorld(event->position());
 
-	// Calculate the visible boundaries in world coordinates
-	const double world_width = width() / zoom_factor_;
-	const double world_height = height() / zoom_factor_;
+  // Calculate the visible boundaries in world coordinates
+  const double world_width = width() / zoom_factor_;
+  const double world_height = height() / zoom_factor_;
 
-	// Clamp the new position to be within the visible area
-	double clamped_x = std::clamp(world_pos.x(), -world_width / 2.0, world_width / 2.0);
-	double clamped_y = std::clamp(world_pos.y(), -world_height / 2.0, world_height / 2.0);
+  // Clamp the new position to be within the visible area
+  double clamped_x =
+      std::clamp(world_pos.x(), -world_width / 2.0, world_width / 2.0);
+  double clamped_y =
+      std::clamp(world_pos.y(), -world_height / 2.0, world_height / 2.0);
 
-	// Update the ik_target_ with the clamped values
-	ik_target_ = Eigen::Vector2d(clamped_x, clamped_y);
+  // Update the ik_target_ with the clamped values
+  ik_target_ = Eigen::Vector2d(clamped_x, clamped_y);
 
-	emit targetPositionChanged(ik_target_.x(), ik_target_.y());
+  emit targetPositionChanged(ik_target_.x(), ik_target_.y());
 
-	update();
-
+  update();
 }
 
-void VisualizationWidget::mouseReleaseEvent(QMouseEvent* event)
-{
-	if (event->button() == Qt::LeftButton) {
-		is_dragging_ = false;
-	}
+void VisualizationWidget::mouseReleaseEvent(QMouseEvent *event) {
+  if (event->button() == Qt::LeftButton) {
+    is_dragging_ = false;
+  }
 }
 
-void VisualizationWidget::resizeEvent(QResizeEvent* event)
-{
-	QFrame::resizeEvent(event); // Base class first
-	redrawWorkspaceCache(); // Size changed, must redraw cache
+void VisualizationWidget::resizeEvent(QResizeEvent *event) {
+  QFrame::resizeEvent(event); // Base class first
+  redrawWorkspaceCache();     // Size changed, must redraw cache
 }
 
-QPointF VisualizationWidget::pixelToWorld(const QPointF& pixel_pos) const
-{
-	// Undo the translation
-	double world_x = pixel_pos.x() - width() / 2.0;
-	double world_y = pixel_pos.y() - height() / 2.0;
+QPointF VisualizationWidget::pixelToWorld(const QPointF &pixel_pos) const {
+  // Undo the translation
+  double world_x = pixel_pos.x() - width() / 2.0;
+  double world_y = pixel_pos.y() - height() / 2.0;
 
-	// Undo the scale and Y-flip
-	world_x /= zoom_factor_;
-	world_y /= -zoom_factor_;
+  // Undo the scale and Y-flip
+  world_x /= zoom_factor_;
+  world_y /= -zoom_factor_;
 
-	return { world_x, world_y };
+  return {world_x, world_y};
 }
 
-void VisualizationWidget::redrawWorkspaceCache()
-{
-	if (width() <= 0 || height() <= 0) return;
+QPointF VisualizationWidget::worldToPixel(const QPointF &world_pos) const {
+  // 1. Scale first (World Units -> Zoomed Units)
+  // Remember Y is flipped (-zoom_factor_)
+  double pixel_x = world_pos.x() * zoom_factor_;
+  double pixel_y = world_pos.y() * -zoom_factor_;
 
-	// 1. Create a pixmap the size of the widget
-	workspace_cache_ = QPixmap(size());
-	workspace_cache_.fill(Qt::transparent); // Clear it
+  // 2. Translate second (Zoomed Units -> Screen Pixels)
+  // Move (0,0) to the center of the widget
+  pixel_x += width() / 2.0;
+  pixel_y += height() / 2.0;
 
-	if (workspace_points_.empty()) return;
-
-	// 2. Create a painter that draws ON THE PIXMAP, not the widget
-	QPainter painter(&workspace_cache_);
-
-	// 3. Set up coordinate transform (SAME AS paintEvent)
-	painter.translate(width() / 2.0, height() / 2.0);
-	painter.scale(zoom_factor_, -zoom_factor_);
-
-	// 4. Draw points
-	QPen cloud_pen(QColor(0, 100, 0, 20));
-	cloud_pen.setWidth(2);
-	cloud_pen.setCosmetic(true);
-	painter.setPen(cloud_pen);
-	painter.drawPoints(workspace_points_.data(), static_cast<int>(workspace_points_.size()));
+  return {pixel_x, pixel_y};
 }
 
+void VisualizationWidget::redrawWorkspaceCache() {
+  if (width() <= 0 || height() <= 0)
+    return;
+
+  // 1. Create a pixmap the size of the widget
+  workspace_cache_ = QPixmap(size());
+  workspace_cache_.fill(Qt::transparent); // Clear it
+
+  if (workspace_points_.empty())
+    return;
+
+  // 2. Create a painter that draws ON THE PIXMAP, not the widget
+  QPainter painter(&workspace_cache_);
+
+  // 3. Set up coordinate transform (SAME AS paintEvent)
+  painter.translate(width() / 2.0, height() / 2.0);
+  painter.scale(zoom_factor_, -zoom_factor_);
+
+  // 4. Draw points
+  QPen cloud_pen(QColor(0, 100, 0, 20));
+  cloud_pen.setWidth(2);
+  cloud_pen.setCosmetic(true);
+  painter.setPen(cloud_pen);
+  painter.drawPoints(workspace_points_.data(),
+                     static_cast<int>(workspace_points_.size()));
+}
